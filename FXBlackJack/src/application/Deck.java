@@ -29,17 +29,17 @@ public class Deck {
             "7_of_clubs", "7_of_spades", "7_of_hearts", "7_of_diamonds",
             "8_of_clubs", "8_of_spades", "8_of_hearts", "8_of_diamonds",
             "9_of_clubs", "9_of_spades", "9_of_hearts", "9_of_diamonds",
-            "10_of_clubs", "10_of_spades", "10_of_hearts", "10_of_diamonds",
-            "jack_of_clubs", "jack_of_spades", "jack_of_hearts", "jack_of_diamonds",
-            "queen_of_clubs", "queen_of_spades", "queen_of_hearts", "queen_of_diamonds",
-            "king_of_clubs", "king_of_spades", "king_of_hearts", "king_of_diamonds",
-            "ace_of_clubs", "ace_of_spades", "ace_of_hearts", "ace_of_diamonds",
+            "T_of_clubs", "T_of_spades", "T_of_hearts", "T_of_diamonds",
+            "J_of_clubs", "J_of_spades", "J_of_hearts", "J_of_diamonds",
+            "Q_of_clubs", "Q_of_spades", "Q_of_hearts", "Q_of_diamonds",
+            "K_of_clubs", "K_of_spades", "K_of_hearts", "K_of_diamonds",
+            "A_of_clubs", "A_of_spades", "A_of_hearts", "A_of_diamonds",
             };
         //loops through all the decks we gonna use and creates card with value
         //adds the card to the current working deck
         for (int decks = 0; decks < 6; decks++ ) {
             for (int x = 0; x < classicDeck.length; x++ ) {
-                deck.add(new Card(classicDeck[x]));
+                deck.add(new Card(classicDeck[x].substring(0, 1),classicDeck[x]));
             }
         }
     }
