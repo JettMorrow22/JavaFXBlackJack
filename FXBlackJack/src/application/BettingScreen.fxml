@@ -17,7 +17,7 @@
       </ImageView>
       <HBox fx:id="rootHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Label fx:id="balanceLabel" text="Balance: " textAlignment="CENTER" textFill="#ffc000">
+            <Label fx:id="balanceLabel" text="Balance: $2500" textAlignment="CENTER" textFill="#ffc000">
                <font>
                   <Font name="System Bold" size="32.0" />
                </font>
@@ -29,31 +29,32 @@
                         <Font name="System Bold" size="27.0" />
                      </font>
                   </Label>
-                  <Label text="Bet amount: " textFill="#ffc000">
+                  <Label fx:id="betLabel" text="Bet amount: " textFill="#ffc000">
                      <font>
                         <Font name="System Bold" size="26.0" />
                      </font>
                   </Label>
                   <HBox fx:id="buttonsHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="button1" mnemonicParsing="false" text="Button">
+                        <Button fx:id="button1" mnemonicParsing="false" onAction="#clickButton1" text="25">
                            <HBox.margin>
-                              <Insets right="20.0" />
+                              <Insets />
                            </HBox.margin></Button>
-                        <Button fx:id="button2" mnemonicParsing="false" text="Button">
+                        <Button fx:id="button2" mnemonicParsing="false" onAction="#clickButton2" text="50">
                            <HBox.margin>
-                              <Insets right="20.0" />
+                              <Insets />
                            </HBox.margin></Button>
-                        <Button fx:id="button3" mnemonicParsing="false" text="Button">
+                        <Button fx:id="button3" mnemonicParsing="false" onAction="#clickButton3" text="100">
                            <HBox.margin>
-                              <Insets right="20.0" />
+                              <Insets />
                            </HBox.margin></Button>
-                        <Button fx:id="button4" mnemonicParsing="false" text="Button">
+                        <Button fx:id="button4" mnemonicParsing="false" onAction="#clickButton4" text="500">
                            <HBox.margin>
-                              <Insets right="20.0" />
+                              <Insets />
                            </HBox.margin></Button>
                      </children>
                   </HBox>
+                  <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clickClearButton" text="Clear Bet" />
                </children>
             </VBox>
             <Region fx:id="spaceLeft" prefHeight="200.0" prefWidth="200.0" />

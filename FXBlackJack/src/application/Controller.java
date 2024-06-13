@@ -45,7 +45,7 @@ public class Controller implements Initializable{
     public void playGame(ActionEvent event) throws IOException {
         
         try {
-           root = FXMLLoader.load(getClass().getResource("BuyInScreen.fxml"));
+           root = FXMLLoader.load(getClass().getResource("BettingScreen.fxml"));
            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
            scene = new Scene(root);
            stage.setScene(scene);

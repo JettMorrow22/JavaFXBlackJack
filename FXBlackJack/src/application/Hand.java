@@ -53,7 +53,14 @@ public class Hand {
     public void setBetAmount(int betAmount) {
         this.betAmount = betAmount;
     }
+    
+    public void increaseBetAmount(int betAmount) {
+        this.betAmount += betAmount;
+    }
 
+    public void decreaseBetAmount(int betAmount) {
+        this.betAmount -= betAmount;
+    }
     /**
      * adds to hand
      * @param card card to add

@@ -46,11 +46,16 @@ public class BuyInController implements Initializable{
     private Stage stage;
     private Scene scene;
     private Parent root;
+    private Game game;
+    
     
     
     //For each of these I must set up the player buy in amount, bet amounts,
     //and switch to the Betting Screeen
+    //create game amount and update the betting amounts
     public void lowStakes(ActionEvent event) throws IOException {
+        
+        game = new Game(new int[] {1, 5, 10, 25});
         
         try {
             root = FXMLLoader.load(getClass().getResource("BettingScreen.fxml"));
@@ -65,6 +70,8 @@ public class BuyInController implements Initializable{
     }
     
     public void middleStakes(ActionEvent event) throws IOException {
+        game = new Game(new int[] {5, 25, 50, 100});
+        
         try {
             root = FXMLLoader.load(getClass().getResource("BettingScreen.fxml"));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -78,6 +85,8 @@ public class BuyInController implements Initializable{
     }
 
     public void highStakes(ActionEvent event) throws IOException {
+        game = new Game(new int[] {250, 500, 1000, 2500});
+        
         try {
             root = FXMLLoader.load(getClass().getResource("BettingScreen.fxml"));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -98,7 +107,7 @@ public class BuyInController implements Initializable{
         
         imageView.setImage(new Image(getClass().getResource("/images/blackjack_Background_Image.jpg").toString()));
         
-      //this adds a listener to the sceneProperty to make sure it is not null
+        //this adds a listener to the sceneProperty to make sure it is not null
         vBox.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 // Bind the font size of the Label and Button to the window size
@@ -115,6 +124,10 @@ public class BuyInController implements Initializable{
             
             }
         });
+    }
+
+    public Game getGame() {
+        return game;
     }
 
 }

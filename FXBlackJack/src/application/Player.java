@@ -5,11 +5,10 @@ import java.util.ArrayList;
 public class Player {
 
     private ArrayList<Hand> hands;
-    private int balance;
+    private int balance = 2500;
     
-    public Player(int num) {
+    public Player() {
         hands = new ArrayList<Hand>();
-        balance = num;
     }
     
     /**

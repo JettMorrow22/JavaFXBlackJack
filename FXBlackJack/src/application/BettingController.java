@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class BettingController implements Initializable{
     
@@ -30,6 +31,9 @@ public class BettingController implements Initializable{
     
     @FXML
     private Label balanceLabel;
+    
+    @FXML
+    private Label betLabel;
     
     @FXML
     private VBox centerVBox;
@@ -55,15 +59,58 @@ public class BettingController implements Initializable{
     @FXML
     private Button dealButton;
     
+    @FXML
+    private Button clearButton;
+    
     @FXML 
     private Region spaceLeft;
     
     @FXML
     private Region spaceRight;
     
+    private Player player;
+    
+    //this needs to increment bet amount and decrease balance
+    public void clickButton1(ActionEvent e) throws IOException{
+        player.decreaseBalance(25);
+        player.getHand(0).increaseBetAmount(25);
+        updateView();
+    }
+    
+    public void clickButton2(ActionEvent e) throws IOException{
+        player.decreaseBalance(50);
+        player.getHand(0).increaseBetAmount(50);
+        updateView();
+    }
+
+    public void clickButton3(ActionEvent e) throws IOException{
+        player.decreaseBalance(100);
+        player.getHand(0).increaseBetAmount(100);
+        updateView();
+    }
+
+    public void clickButton4(ActionEvent e) throws IOException{
+        player.decreaseBalance(500);
+        player.getHand(0).increaseBetAmount(500);
+        updateView();
+    }
+    
+    public void clickClearButton(ActionEvent e) throws IOException {
+        player.increaseBalance(player.getHand(0).getBetAmount());
+        player.getHand(0).setBetAmount(0);
+        updateView();
+    }
+    
+    public void updateView() {
+        balanceLabel.setText("Balance: $" + player.getBalance());
+        betLabel.setText("Bet Amount: $ " + player.getHand(0).getBetAmount());
+    }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        player = new Player();
+        player.createHand();
+        
         //this makes the imageView the size of the stackPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
         imageView.fitHeightProperty().bind(stackPane.heightProperty());
@@ -77,6 +124,13 @@ public class BettingController implements Initializable{
         dealButton.prefWidthProperty().bind(rootHBox.widthProperty().divide(8));
         dealButton.prefHeightProperty().bind(rootHBox.widthProperty().divide(8));
         
+        buttonsHBox.setSpacing(10);
+        button1.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button2.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button3.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button4.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+
+        
         // Bind the font size of the button to its height
         NumberBinding fontSizeBinding = Bindings.createDoubleBinding(() -> {
             // Adjust the multiplier to your preference
@@ -84,7 +138,7 @@ public class BettingController implements Initializable{
         }, dealButton.heightProperty());
         dealButton.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSizeBinding.asString(), "px;"));
 
-        
+        //intiliza text from games
     }
     
     public void deal(ActionEvent e ) throws IOException{
