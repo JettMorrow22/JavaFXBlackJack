@@ -7,7 +7,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -17,6 +21,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 public class BettingController implements Initializable{
     
@@ -69,30 +74,44 @@ public class BettingController implements Initializable{
     private Region spaceRight;
     
     private Player player;
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
     
     //this needs to increment bet amount and decrease balance
     public void clickButton1(ActionEvent e) throws IOException{
-        player.decreaseBalance(25);
-        player.getHand(0).increaseBetAmount(25);
-        updateView();
+        if(player.getBalance() >= 25) {
+            player.decreaseBalance(25);
+            player.getHand(0).increaseBetAmount(25);
+            updateView();
+        }
     }
     
     public void clickButton2(ActionEvent e) throws IOException{
-        player.decreaseBalance(50);
-        player.getHand(0).increaseBetAmount(50);
-        updateView();
+        
+        if (player.getBalance() >= 50) {
+            player.decreaseBalance(50);
+            player.getHand(0).increaseBetAmount(50);
+            updateView();
+        }
     }
 
     public void clickButton3(ActionEvent e) throws IOException{
-        player.decreaseBalance(100);
-        player.getHand(0).increaseBetAmount(100);
-        updateView();
+        if (player.getBalance() >= 100) {
+            player.decreaseBalance(100);
+            player.getHand(0).increaseBetAmount(100);
+            updateView();
+        }
+
     }
 
     public void clickButton4(ActionEvent e) throws IOException{
-        player.decreaseBalance(500);
-        player.getHand(0).increaseBetAmount(500);
-        updateView();
+        if (player.getBalance() >= 500) {
+            player.decreaseBalance(500);
+            player.getHand(0).increaseBetAmount(500);
+            updateView();
+        }
+
     }
     
     public void clickClearButton(ActionEvent e) throws IOException {
@@ -124,6 +143,7 @@ public class BettingController implements Initializable{
         dealButton.prefWidthProperty().bind(rootHBox.widthProperty().divide(8));
         dealButton.prefHeightProperty().bind(rootHBox.widthProperty().divide(8));
         
+        //set spacing and width of buttons
         buttonsHBox.setSpacing(10);
         button1.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
         button2.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
@@ -138,11 +158,25 @@ public class BettingController implements Initializable{
         }, dealButton.heightProperty());
         dealButton.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSizeBinding.asString(), "px;"));
 
-        //intiliza text from games
     }
     
     public void deal(ActionEvent e ) throws IOException{
-        
+      
+        if ( player.getHand(0).getBetAmount() > 0) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("GameScreen.fxml"));
+                GameController gameController = new GameController(player);
+                loader.setController(gameController);
+                root = loader.load();
+                stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show(); 
+            }
+            catch (IOException event) {
+                event.printStackTrace();
+            }
+        }
     }
 
 }
