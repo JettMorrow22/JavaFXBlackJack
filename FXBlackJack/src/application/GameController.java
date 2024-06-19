@@ -33,10 +33,16 @@ public class GameController implements Initializable{
     private VBox rightVBox;
     
     @FXML
+    private ImageView deckImage;
+    
+    @FXML
     private HBox dealerHBox;
     
     @FXML
     private HBox playerHBox;
+    
+    @FXML
+    private VBox buttonVBox;
     
     @FXML
     private Button splitButton;
@@ -65,19 +71,40 @@ public class GameController implements Initializable{
         imageView.fitHeightProperty().bind(stackPane.heightProperty());
         imageView.setImage(new Image(getClass().getResource("/images/blackjack_Background_Image.jpg").toString()));
 
-        //bind the width of the root HBox children to take up equal width
+        //HBox children to take up equal width and full height
         balanceLabel.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        balanceLabel.prefHeightProperty().bind(rootHBox.heightProperty());
         middleVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        middleVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        rightVBox.prefHeightProperty().bind(rootHBox.heightProperty());
+
         
         //bind the height of the dealer and playerHBox to take up the whole height
         dealerHBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(2));
         playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(2));
         
-        //spacing and sizing for rightVBox
-        rightVBox.setSpacing(25);
         
+        //Everything RightVBox        
+        //sets deck image to upper 33% of right VBox
+        deckImage.fitHeightProperty().bind(stackPane.heightProperty().multiply(.33));
+        deckImage.setImage(new Image(getClass().getResource("/images/PNG-cards/back_of_card.png").toString()));
         
-        
+        //buttons
+        buttonVBox.prefHeightProperty().bind(stackPane.heightProperty().multiply(.67));
+        buttonVBox.setSpacing(10);
+        hitButton.getStyleClass().add("circular-button");
+        standButton.getStyleClass().add("circular-button");
+        doubleButton.getStyleClass().add("circular-button");
+        splitButton.getStyleClass().add("circular-button");
+
+        hitButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
+        hitButton.prefWidthProperty().bind(hitButton.heightProperty());
+        standButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
+        standButton.prefWidthProperty().bind(standButton.heightProperty());
+        doubleButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
+        doubleButton.prefWidthProperty().bind(doubleButton.heightProperty());
+        splitButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
+        splitButton.prefWidthProperty().bind(splitButton.heightProperty());     
     }
 }

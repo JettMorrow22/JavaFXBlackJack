@@ -140,23 +140,26 @@ public class BettingController implements Initializable{
         centerVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(2));
         spaceLeft.prefWidthProperty().bind(rootHBox.widthProperty().divide(16));
         spaceRight.prefWidthProperty().bind(rootHBox.widthProperty().divide(16));
+        dealButton.getStyleClass().add("circular-button");
         dealButton.prefWidthProperty().bind(rootHBox.widthProperty().divide(8));
-        dealButton.prefHeightProperty().bind(rootHBox.widthProperty().divide(8));
+        dealButton.prefHeightProperty().bind(dealButton.widthProperty());
         
         //set spacing and width of buttons
         buttonsHBox.setSpacing(10);
-        button1.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
-        button2.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
-        button3.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
-        button4.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
-
+        button1.getStyleClass().add("circular-button");
+        button2.getStyleClass().add("circular-button");
+        button3.getStyleClass().add("circular-button");
+        button4.getStyleClass().add("circular-button");
         
-        // Bind the font size of the button to its height
-        NumberBinding fontSizeBinding = Bindings.createDoubleBinding(() -> {
-            // Adjust the multiplier to your preference
-            return dealButton.getHeight() * 0.25; 
-        }, dealButton.heightProperty());
-        dealButton.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSizeBinding.asString(), "px;"));
+        button1.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button1.prefHeightProperty().bind(button1.widthProperty());
+        button2.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button2.prefHeightProperty().bind(button1.widthProperty());
+        button3.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button3.prefHeightProperty().bind(button1.widthProperty());
+        button4.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
+        button4.prefHeightProperty().bind(button1.widthProperty());
+
 
     }
     
@@ -170,6 +173,7 @@ public class BettingController implements Initializable{
                 root = loader.load();
                 stage = (Stage)((Node)e.getSource()).getScene().getWindow();
                 scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
                 stage.setScene(scene);
                 stage.show(); 
             }
