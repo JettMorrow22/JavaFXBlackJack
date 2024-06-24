@@ -50,6 +50,12 @@ public class BettingController implements Initializable{
     private HBox buttonsHBox;
     
     @FXML
+    private VBox rightVBox;
+    
+    @FXML
+    private ImageView deckImage;
+    
+    @FXML
     private Button button1;
     
     @FXML
@@ -73,62 +79,68 @@ public class BettingController implements Initializable{
     @FXML
     private Region spaceRight;
     
-    private Player player;
+    private Game game;
     private Stage stage;
     private Scene scene;
     private Parent root;
     
+    
+    public BettingController(Game g) {
+        game = g;
+    }
+    
     //this needs to increment bet amount and decrease balance
     public void clickButton1(ActionEvent e) throws IOException{
-        if(player.getBalance() >= 25) {
-            player.decreaseBalance(25);
-            player.getHand(0).increaseBetAmount(25);
+        if(game.getPlayer().getBalance() >= 25) {
+            game.getPlayer().decreaseBalance(25);
+            game.getPlayer().getHand(0).increaseBetAmount(25);
             updateView();
         }
     }
     
     public void clickButton2(ActionEvent e) throws IOException{
         
-        if (player.getBalance() >= 50) {
-            player.decreaseBalance(50);
-            player.getHand(0).increaseBetAmount(50);
+        if (game.getPlayer().getBalance() >= 50) {
+            game.getPlayer().decreaseBalance(50);
+            game.getPlayer().getHand(0).increaseBetAmount(50);
             updateView();
         }
     }
 
     public void clickButton3(ActionEvent e) throws IOException{
-        if (player.getBalance() >= 100) {
-            player.decreaseBalance(100);
-            player.getHand(0).increaseBetAmount(100);
+        if (game.getPlayer().getBalance() >= 100) {
+            game.getPlayer().decreaseBalance(100);
+            game.getPlayer().getHand(0).increaseBetAmount(100);
             updateView();
         }
 
     }
 
     public void clickButton4(ActionEvent e) throws IOException{
-        if (player.getBalance() >= 500) {
-            player.decreaseBalance(500);
-            player.getHand(0).increaseBetAmount(500);
+        if (game.getPlayer().getBalance() >= 500) {
+            game.getPlayer().decreaseBalance(500);
+            game.getPlayer().getHand(0).increaseBetAmount(500);
             updateView();
         }
 
     }
     
     public void clickClearButton(ActionEvent e) throws IOException {
-        player.increaseBalance(player.getHand(0).getBetAmount());
-        player.getHand(0).setBetAmount(0);
+        game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
+        game.getPlayer().getHand(0).setBetAmount(0);
         updateView();
     }
     
     public void updateView() {
-        balanceLabel.setText("Balance: $" + player.getBalance());
-        betLabel.setText("Bet Amount: $ " + player.getHand(0).getBetAmount());
+        balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
+        betLabel.setText("Bet Amount: $ " + game.getPlayer().getHand(0).getBetAmount());
     }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        player = new Player();
-        player.createHand();
+        game.getPlayer().createHand();
+        balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
+
         
         //this makes the imageView the size of the stackPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
@@ -138,8 +150,8 @@ public class BettingController implements Initializable{
         //bind children of HBox to take up certain width
         balanceLabel.prefWidthProperty().bind(rootHBox.widthProperty().divide(4));
         centerVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(2));
-        spaceLeft.prefWidthProperty().bind(rootHBox.widthProperty().divide(16));
-        spaceRight.prefWidthProperty().bind(rootHBox.widthProperty().divide(16));
+        rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(4));
+        
         dealButton.getStyleClass().add("circular-button");
         dealButton.prefWidthProperty().bind(rootHBox.widthProperty().divide(8));
         dealButton.prefHeightProperty().bind(dealButton.widthProperty());
@@ -159,16 +171,20 @@ public class BettingController implements Initializable{
         button3.prefHeightProperty().bind(button1.widthProperty());
         button4.prefWidthProperty().bind(buttonsHBox.widthProperty().divide(5));
         button4.prefHeightProperty().bind(button1.widthProperty());
+        
+        //right Vbox
+        deckImage.fitHeightProperty().bind(stackPane.heightProperty().divide(3));
+        deckImage.setImage(new Image(getClass().getResource("/images/PNG-cards/back_of_card.png").toString()));
 
 
     }
     
     public void deal(ActionEvent e ) throws IOException{
       
-        if ( player.getHand(0).getBetAmount() > 0) {
+        if ( game.getPlayer().getHand(0).getBetAmount() > 0) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("GameScreen.fxml"));
-                GameController gameController = new GameController(player);
+                GameController gameController = new GameController(game);
                 loader.setController(gameController);
                 root = loader.load();
                 stage = (Stage)((Node)e.getSource()).getScene().getWindow();

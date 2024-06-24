@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -29,17 +30,36 @@ public class GameController implements Initializable{
     @FXML
     private VBox middleVBox;
     
+    //three main container for middle VBox
+    @FXML
+    private VBox dealerVBox;
+    
+    @FXML
+    private HBox dealerCardBox;
+    
+    @FXML
+    private Label dealerHandTotal;
+    
+    @FXML
+    private Region middleRegion;
+    
+    @FXML
+    private HBox playerHBox;
+    
+    @FXML
+    private VBox playerVBox1;
+    
+    @FXML
+    private HBox playerCardBox1;
+    
+    @FXML
+    private Label playerHandTotal1;
+    
     @FXML
     private VBox rightVBox;
     
     @FXML
     private ImageView deckImage;
-    
-    @FXML
-    private HBox dealerHBox;
-    
-    @FXML
-    private HBox playerHBox;
     
     @FXML
     private VBox buttonVBox;
@@ -56,15 +76,20 @@ public class GameController implements Initializable{
     @FXML
     private Button standButton;
     
-    private Player player;
+    private Game game;
     
-    public GameController(Player play) {
-        player = play;
+    public GameController(Game g) {
+        game  = g; 
+    }
+    
+    
+    public void updateView() {
+        //i need to update the card images for both dealer and player HBox's
     }
     
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        balanceLabel.setText("Balance: $" + player.getBalance());
+        balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
         
         //this makes the imageView the size of the stackPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
@@ -78,12 +103,15 @@ public class GameController implements Initializable{
         middleVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
         rightVBox.prefHeightProperty().bind(rootHBox.heightProperty());
-
         
-        //bind the height of the dealer and playerHBox to take up the whole height
-        dealerHBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(2));
-        playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(2));
+        //Height for children of middleVBox
+        dealerVBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.4));
+        middleRegion.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.2));
+        playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.4));
         
+        //player and dealer card boxes
+        playerCardBox1.prefHeightProperty().bind(middleVBox.heightProperty().divide(3));
+        dealerCardBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(3));
         
         //Everything RightVBox        
         //sets deck image to upper 33% of right VBox

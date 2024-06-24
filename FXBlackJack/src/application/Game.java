@@ -8,24 +8,31 @@ public class Game {
     private Player player;
     private Dealer dealer;
     private Deck deck;
-    private int[] bettingAmounts;
     
     private static HashMap<String, Integer> cardValues;
 
     
-    public Game(int[] bets) {
-        bettingAmounts = bets;
+    public Game() {
+        player = new Player();
+        dealer = new Dealer();
+        deck = new Deck();
         cardValues = createCardValuesMap();
-    }
-    
-    public int[] getBettingAmounts() {
-        return bettingAmounts;
     }
 
     public void startGame() {
-        //I must create the player, dealer , deck and initialize betting amounts
+        //must start betting
+    }
+    
+    
+    public void bettingCycle() {
+        //firstly add card to dealer and player hands
+        player.addToHand(0, deck.deal());
+        dealer.addToHand(deck.deal());
+        player.addToHand(0, deck.deal());
+        dealer.addToHand(deck.deal());
         
-        //then start the betting
+        //now must show these on the screen
+        //create image views 
     }
     
     /**
@@ -106,5 +113,17 @@ public class Game {
         temp.put("A", 11);
         temp.put("a", 1);
         return temp;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Dealer getDealer() {
+        return dealer;
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 }

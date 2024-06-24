@@ -41,24 +41,30 @@ public class Controller implements Initializable{
     private Stage stage;
     private Scene scene;
     private Parent root;
+    private Game game;
     
     public void playGame(ActionEvent event) throws IOException {
         
         try {
-           root = FXMLLoader.load(getClass().getResource("BettingScreen.fxml"));
-           stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-           scene = new Scene(root);
-           scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-           stage.setScene(scene);
-           stage.show(); 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("BettingScreen.fxml"));
+            BettingController bettingController = new BettingController(game);
+            loader.setController( bettingController);
+            root = loader.load();
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            stage.setScene(scene);
+            stage.show(); 
         }
-        catch(IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {        
+    public void initialize(URL arg0, ResourceBundle arg1) {   
+        game = new Game();
+        
         //this makes the imageView the size of the anchorPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
         imageView.fitHeightProperty().bind(stackPane.heightProperty());

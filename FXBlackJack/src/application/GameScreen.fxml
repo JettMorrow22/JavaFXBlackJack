@@ -4,10 +4,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 
 <StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
@@ -22,14 +21,21 @@
                </font></Label>
             <VBox fx:id="middleVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <HBox fx:id="dealerHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <VBox fx:id="dealerVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Circle fill="DODGERBLUE" radius="72.0" stroke="BLACK" strokeType="INSIDE" />
+                        <HBox fx:id="dealerCardBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" />
+                        <Label fx:id="dealerHandTotal" alignment="CENTER" text="Total:" />
                      </children>
-                  </HBox>
-                  <HBox fx:id="playerHBox" prefHeight="100.0" prefWidth="200.0">
+                  </VBox>
+                  <Region fx:id="middleRegion" prefHeight="200.0" prefWidth="200.0" />
+                  <HBox fx:id="playerHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Polygon fill="DODGERBLUE" points="49.9999885559082, 40.00001525878906, 73.33333587646484, -1.9999847412109375, 0.0, -60.0" stroke="BLACK" strokeType="INSIDE" />
+                        <VBox fx:id="playerVBox1" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <HBox fx:id="playerCardBox1" prefHeight="100.0" prefWidth="200.0" />
+                              <Label fx:id="playerHandTotal1" text="HELLOEOADS;LFJDSAJ" />
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>
