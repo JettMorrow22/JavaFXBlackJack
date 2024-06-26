@@ -24,7 +24,7 @@
                   <VBox fx:id="dealerVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <HBox fx:id="dealerCardBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" />
-                        <Label fx:id="dealerHandTotal" alignment="CENTER" text="Total:" />
+                        <Label fx:id="dealerHandTotal" alignment="CENTER" text="Total:" textFill="#ffc000" />
                      </children>
                   </VBox>
                   <Region fx:id="middleRegion" prefHeight="200.0" prefWidth="200.0" />
@@ -33,7 +33,7 @@
                         <VBox fx:id="playerVBox1" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <HBox fx:id="playerCardBox1" prefHeight="100.0" prefWidth="200.0" />
-                              <Label fx:id="playerHandTotal1" text="HELLOEOADS;LFJDSAJ" />
+                              <Label fx:id="playerHandTotal1" text="HELLOEOADS;LFJDSAJ" textFill="#ffc000" />
                            </children>
                         </VBox>
                      </children>

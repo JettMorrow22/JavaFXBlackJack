@@ -1,7 +1,9 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -12,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class GameController implements Initializable{
 
@@ -82,6 +85,22 @@ public class GameController implements Initializable{
         game  = g; 
     }
     
+    public void splitButton(ActionEvent e) throws IOException {
+        
+    }
+    
+    public void doubleButton(ActionEvent e) throws IOException {
+        
+    }
+
+    public void standButton(ActionEvent e) throws IOException {
+    
+    }
+
+    public void hitButton(ActionEvent e) throws IOException {
+    
+    }
+    
     
     public void updateView() {
         //i need to update the card images for both dealer and player HBox's
@@ -89,6 +108,8 @@ public class GameController implements Initializable{
     
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        game.bettingCycle();
+        
         balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
         
         //this makes the imageView the size of the stackPane
@@ -110,8 +131,38 @@ public class GameController implements Initializable{
         playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.4));
         
         //player and dealer card boxes
-        playerCardBox1.prefHeightProperty().bind(middleVBox.heightProperty().divide(3));
-        dealerCardBox.prefHeightProperty().bind(middleVBox.heightProperty().divide(3));
+        playerCardBox1.prefHeightProperty().bind(playerHBox.heightProperty());
+        playerCardBox1.setSpacing(5);
+        
+        //load player cards
+        Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getCard(0).getFileName() + ".png"));
+        Image playerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getCard(1).getFileName() + ".png"));
+        ImageView playerImageView1 = new ImageView(playerCard1);
+        ImageView playerImageView2 = new ImageView(playerCard2);
+        playerImageView1.fitHeightProperty().bind(playerCardBox1.heightProperty());
+        playerImageView1.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
+        playerImageView2.fitHeightProperty().bind(playerCardBox1.heightProperty());        
+        playerImageView2.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
+        playerImageView1.setPreserveRatio(true);
+        playerImageView2.setPreserveRatio(true);
+        playerCardBox1.getChildren().addAll(playerImageView1, playerImageView2);
+        
+        //load dealer cards 
+        dealerCardBox.prefHeightProperty().bind(dealerVBox.heightProperty());
+        dealerCardBox.setSpacing(5);
+        
+        Image dealerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(0).getFileName() + ".png"));
+        Image dealerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(1).getFileName() + ".png"));
+        ImageView dealerImageView1 = new ImageView(dealerCard1);
+        ImageView dealerImageView2 = new ImageView(dealerCard2);
+        dealerImageView1.fitHeightProperty().bind(dealerCardBox.heightProperty());
+        dealerImageView1.fitWidthProperty().bind(dealerCardBox.widthProperty().divide(2));
+        dealerImageView2.fitHeightProperty().bind(dealerCardBox.heightProperty());  
+        dealerImageView2.fitHeightProperty().bind(dealerCardBox.widthProperty().divide(2));
+        dealerImageView1.setPreserveRatio(true);
+        dealerImageView2.setPreserveRatio(true);
+        dealerCardBox.getChildren().addAll(dealerImageView1, dealerImageView2);
+        
         
         //Everything RightVBox        
         //sets deck image to upper 33% of right VBox
