@@ -118,50 +118,65 @@ public class GameController implements Initializable{
         imageView.setImage(new Image(getClass().getResource("/images/blackjack_Background_Image.jpg").toString()));
 
         //HBox children to take up equal width and full height
-        balanceLabel.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        balanceLabel.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.2));
         balanceLabel.prefHeightProperty().bind(rootHBox.heightProperty());
-        middleVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        middleVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.5));
         middleVBox.prefHeightProperty().bind(rootHBox.heightProperty());
-        rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().divide(3));
+        rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.3));
         rightVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         
-        //Height for children of middleVBox
+        //TESTING MIDDLE VBOX
+        middleVBox.setStyle("-fx-background-color: #ADD8E6;");
+        dealerVBox.setStyle("-fx-background-color: #000000;");
+        dealerCardBox.setStyle("-fx-background-color: #ADD8E6;");
+        middleRegion.setStyle("-fx-background-color: #CCCCCC;");
+        
+        //Height & width for children of middleVBox
         dealerVBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.4));
+        dealerVBox.prefWidthProperty().bind(middleVBox.widthProperty());
         middleRegion.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.2));
+        middleRegion.prefWidthProperty().bind(middleVBox.widthProperty());
         playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.4));
+        playerHBox.prefWidthProperty().bind(middleVBox.widthProperty());
+        playerVBox1.prefHeightProperty().bind(playerHBox.heightProperty());
+        playerVBox1.prefWidthProperty().bind(playerHBox.widthProperty());
+        
         
         //player and dealer card boxes
-        playerCardBox1.prefHeightProperty().bind(playerHBox.heightProperty());
-        playerCardBox1.setSpacing(5);
+        playerCardBox1.prefHeightProperty().bind(playerVBox1.heightProperty().multiply(.75));
+        playerCardBox1.prefWidthProperty().bind(playerVBox1.widthProperty());
+        playerCardBox1.setSpacing(5.0);
         
         //load player cards
         Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getCard(0).getFileName() + ".png"));
         Image playerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getCard(1).getFileName() + ".png"));
         ImageView playerImageView1 = new ImageView(playerCard1);
         ImageView playerImageView2 = new ImageView(playerCard2);
-        playerImageView1.fitHeightProperty().bind(playerCardBox1.heightProperty());
-        playerImageView1.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
-        playerImageView2.fitHeightProperty().bind(playerCardBox1.heightProperty());        
-        playerImageView2.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
+
         playerImageView1.setPreserveRatio(true);
         playerImageView2.setPreserveRatio(true);
-        playerCardBox1.getChildren().addAll(playerImageView1, playerImageView2);
+        playerImageView1.fitHeightProperty().bind(playerCardBox1.heightProperty());
+        playerImageView1.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
+        playerImageView2.fitHeightProperty().bind(playerCardBox1.heightProperty());   
+        playerImageView2.fitWidthProperty().bind(playerCardBox1.widthProperty().divide(2));
+        playerCardBox1.getChildren().addAll(playerImageView1);
         
         //load dealer cards 
-        dealerCardBox.prefHeightProperty().bind(dealerVBox.heightProperty());
+        dealerCardBox.prefHeightProperty().bind(dealerVBox.heightProperty().multiply(.75));
+        dealerCardBox.prefWidthProperty().bind(dealerVBox.widthProperty());
         dealerCardBox.setSpacing(5);
         
         Image dealerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(0).getFileName() + ".png"));
         Image dealerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(1).getFileName() + ".png"));
         ImageView dealerImageView1 = new ImageView(dealerCard1);
-        ImageView dealerImageView2 = new ImageView(dealerCard2);
+        ImageView dealerImageView2 = new ImageView();
+        dealerImageView1.setPreserveRatio(true);
+        dealerImageView2.setPreserveRatio(true);
         dealerImageView1.fitHeightProperty().bind(dealerCardBox.heightProperty());
         dealerImageView1.fitWidthProperty().bind(dealerCardBox.widthProperty().divide(2));
         dealerImageView2.fitHeightProperty().bind(dealerCardBox.heightProperty());  
         dealerImageView2.fitHeightProperty().bind(dealerCardBox.widthProperty().divide(2));
-        dealerImageView1.setPreserveRatio(true);
-        dealerImageView2.setPreserveRatio(true);
-        dealerCardBox.getChildren().addAll(dealerImageView1, dealerImageView2);
+        dealerCardBox.getChildren().addAll(dealerImageView1);
         
         
         //Everything RightVBox        
