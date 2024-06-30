@@ -82,7 +82,7 @@ public class Hand {
      * Basic getter for hand
      * @return hand
      */
-    public ArrayList<Card> getHand() {
+    public ArrayList<Card> getList() {
         return hand;
     }
     

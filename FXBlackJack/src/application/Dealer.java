@@ -22,7 +22,7 @@ public class Dealer {
      * @return the dealers first card value
      */
     public String showOneCard() {
-        return hand.getHand().get(0).getValue();
+        return hand.getList().get(0).getValue();
     }
     
     /**

@@ -2,6 +2,8 @@ package application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -59,6 +61,9 @@ public class GameController implements Initializable{
     private Label playerHandTotal1;
     
     @FXML
+    private Label playerHandBetAmount1;
+    
+    @FXML
     private VBox rightVBox;
     
     @FXML
@@ -98,7 +103,8 @@ public class GameController implements Initializable{
     }
 
     public void hitButton(ActionEvent e) throws IOException {
-    
+        
+        //try addind card to player Hand and add card to screen and update Total
     }
     
     
@@ -124,12 +130,6 @@ public class GameController implements Initializable{
         middleVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.3));
         rightVBox.prefHeightProperty().bind(rootHBox.heightProperty());
-        
-        //TESTING MIDDLE VBOX
-        //middleVBox.setStyle("-fx-background-color: #ADD8E6;");
-        //dealerVBox.setStyle("-fx-background-color: #000000;");
-        //dealerCardBox.setStyle("-fx-background-color: #ADD8E6;");
-        //middleRegion.setStyle("-fx-background-color: #CCCCCC;");
         
         //Height & width for children of middleVBox
         dealerVBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.45));
@@ -160,7 +160,9 @@ public class GameController implements Initializable{
         //SETTING THE WIDTH PROPORTIONAL TO THE HEIGHT
         pane1.prefWidthProperty().bind(pane1.heightProperty().multiply(.69));
         pane2.prefWidthProperty().bind(pane2.heightProperty().multiply(.69));
-
+        
+        playerHandBetAmount1.setText("Bet Amount: $" + game.getPlayer().getHand(0).getBetAmount());
+        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
         
         //load dealer cards 
         dealerCardBox.prefHeightProperty().bind(dealerVBox.heightProperty().multiply(.8));
@@ -169,7 +171,7 @@ public class GameController implements Initializable{
         dealerHandTotal.prefWidthProperty().bind(dealerVBox.widthProperty());
         
         Image dealerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(0).getFileName() + ".png"));
-        Image dealerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getCard(1).getFileName() + ".png"));
+        Image dealerCard2 = new Image(getClass().getResourceAsStream("/images/PNG-cards/back_of_card.png"));
         ImageView dealerImageView1 = new ImageView(dealerCard1);
         ImageView dealerImageView2 = new ImageView(dealerCard2);
         dealerImageView1.setPreserveRatio(true);
@@ -180,6 +182,9 @@ public class GameController implements Initializable{
         //SETTING THE WIDTH PROPORTIONAL TO THE HEIGHT
         dPane1.prefWidthProperty().bind(dPane1.heightProperty().multiply(.69));
         dPane2.prefWidthProperty().bind(dPane2.heightProperty().multiply(.69));
+        
+        //show first dealer card amount
+        dealerHandTotal.setText("Total: " + game.calculateHand(new ArrayList<>(Collections.singletonList( game.getDealer().getHand().getCard(0)))));
         
         //Everything RightVBox        
         //sets deck image to upper 33% of right VBox
