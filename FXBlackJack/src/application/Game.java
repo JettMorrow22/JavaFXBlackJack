@@ -97,6 +97,10 @@ public class Game {
         hand.get(num).setValue("a");
     }
     
+    public int getCardValue(String s) {
+        return cardValues.get(s);
+    }
+    
     /**
      * creates hashMap of card values strings to ints
      * @return hashMap

@@ -46,7 +46,7 @@ public class GameController implements Initializable{
     private Label dealerHandTotal;
     
     @FXML
-    private Region middleRegion;
+    private Label middleLabel;
     
     @FXML
     private HBox playerHBox;
@@ -112,6 +112,11 @@ public class GameController implements Initializable{
         //i need to update the card images for both dealer and player HBox's
     }
     
+    public void gameOver() {
+        //clear both player and dealer hands
+        
+    }
+    
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         game.bettingCycle();
@@ -134,8 +139,8 @@ public class GameController implements Initializable{
         //Height & width for children of middleVBox
         dealerVBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.45));
         dealerVBox.prefWidthProperty().bind(middleVBox.widthProperty());
-        middleRegion.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.1));
-        middleRegion.prefWidthProperty().bind(middleVBox.widthProperty());
+        middleLabel.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.1));
+        middleLabel.prefWidthProperty().bind(middleVBox.widthProperty());
         playerHBox.prefHeightProperty().bind(middleVBox.heightProperty().multiply(.45));
         playerHBox.prefWidthProperty().bind(middleVBox.widthProperty());
         playerVBox1.prefHeightProperty().bind(playerHBox.heightProperty());
@@ -206,6 +211,26 @@ public class GameController implements Initializable{
         doubleButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
         doubleButton.prefWidthProperty().bind(doubleButton.heightProperty());
         splitButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
-        splitButton.prefWidthProperty().bind(splitButton.heightProperty());     
+        splitButton.prefWidthProperty().bind(splitButton.heightProperty());   
+        
+        
+        
+        //Determine what the two cards mean
+        //if player has BJ then pay out and round over unless dealer has BJ
+        if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
+            
+        }
+        middleLabel.setText("hey");
+        
+        //determine if split button should be displayed or not
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
+                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
+            splitButton.setVisible(false);
+        }
+        
+        //determine if double button should be displayed or not
+        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
+            doubleButton.setVisible(false);
+        }
     }
 }

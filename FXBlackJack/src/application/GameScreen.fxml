@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -30,7 +29,11 @@
                            </font></Label>
                      </children>
                   </VBox>
-                  <Region fx:id="middleRegion" prefHeight="200.0" prefWidth="200.0" />
+                  <Label fx:id="middleLabel" alignment="CENTER" contentDisplay="CENTER" textFill="#ffc000">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
                   <HBox fx:id="playerHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <VBox fx:id="playerVBox1" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
