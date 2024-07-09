@@ -42,7 +42,7 @@ public class Game {
      * @param hand hand in questoin
      * @return true if busted false if not
      */
-    public Boolean didBust(ArrayList<Card> hand) {
+    public boolean didBust(ArrayList<Card> hand) {
         
         if (calculateHand(hand) > 21) {
             if (hasAce(hand)) {

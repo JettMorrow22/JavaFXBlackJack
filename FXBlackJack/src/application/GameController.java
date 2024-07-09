@@ -5,11 +5,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ResourceBundle;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -17,6 +24,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GameController implements Initializable{
 
@@ -85,6 +94,9 @@ public class GameController implements Initializable{
     private Button standButton;
     
     private Game game;
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
     
     public GameController(Game g) {
         game  = g; 
@@ -103,7 +115,7 @@ public class GameController implements Initializable{
     }
 
     public void hitButton(ActionEvent e) throws IOException {
-        
+        gameOver("Player Has BlackJack");
         //try addind card to player Hand and add card to screen and update Total
     }
     
@@ -112,11 +124,85 @@ public class GameController implements Initializable{
         //i need to update the card images for both dealer and player HBox's
     }
     
-    public void gameOver() {
-        //clear both player and dealer hands
+    public void checkTwoCard() {
+        //Determine what the two cards mean
+        //if player has BJ then pay out and round over unless dealer has BJ
+        if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
+           //push
+           if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
+               game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
+               gameOver("Push");
+           }
+           else { //player win
+               game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
+               gameOver("Player Has BlackJack");
+           }
+        }
         
+        //determine if split button should be displayed or not
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
+                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
+            splitButton.setVisible(false);
+        }
+        
+        //determine if double button should be displayed or not
+        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
+            doubleButton.setVisible(false);
+        }
     }
     
+    public void gameOver(String winner) {
+        //clear both player and dealer hands
+        game.getPlayer().getHands().clear();
+        game.getDealer().getHand().getList().clear();
+        
+        //update midelLabel
+        middleLabel.setText(winner);
+        
+        //check if money to playAgain
+        if (game.getPlayer().getBalance() > 0) {
+         // Create a timeline to delay for 5 seconds
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+              //switch to betting screen
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("BettingScreen.fxml"));
+                    BettingController bettingController = new BettingController(game);
+                    loader.setController(bettingController);
+                    root = loader.load();
+                    stage = (Stage)stackPane.getScene().getWindow();
+                    
+                    double width = stage.getWidth();
+                    double height = stage.getHeight();
+                    double x = stage.getX();
+                    double y = stage.getY();
+                    
+                    scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+                    stage.setScene(scene);
+                    
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+                    stage.setX(x);
+                    stage.setY(y);
+                    
+                    stage.show(); 
+                }
+                catch (IOException event) {
+                    event.printStackTrace();
+                }
+            }));
+            timeline.play();
+            
+        }
+        else {
+            //do something when we are out of money
+            //TODO
+            //------------------------------------------------------------------
+        }
+         
+    }
+    
+     
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         game.bettingCycle();
@@ -211,26 +297,8 @@ public class GameController implements Initializable{
         doubleButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
         doubleButton.prefWidthProperty().bind(doubleButton.heightProperty());
         splitButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
-        splitButton.prefWidthProperty().bind(splitButton.heightProperty());   
+        splitButton.prefWidthProperty().bind(splitButton.heightProperty());  
         
-        
-        
-        //Determine what the two cards mean
-        //if player has BJ then pay out and round over unless dealer has BJ
-        if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
-            
-        }
-        middleLabel.setText("hey");
-        
-        //determine if split button should be displayed or not
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
-                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
-            splitButton.setVisible(false);
-        }
-        
-        //determine if double button should be displayed or not
-        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
-            doubleButton.setVisible(false);
-        }
+        checkTwoCard();
     }
 }

@@ -29,9 +29,9 @@
                            </font></Label>
                      </children>
                   </VBox>
-                  <Label fx:id="middleLabel" alignment="CENTER" contentDisplay="CENTER" textFill="#ffc000">
+                  <Label fx:id="middleLabel" alignment="CENTER" contentDisplay="CENTER" textFill="RED">
                      <font>
-                        <Font size="20.0" />
+                        <Font size="40.0" />
                      </font>
                   </Label>
                   <HBox fx:id="playerHBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
@@ -59,10 +59,10 @@
                   <ImageView fx:id="deckImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                   <VBox fx:id="buttonVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="splitButton" mnemonicParsing="false" text="Split" />
-                        <Button fx:id="doubleButton" mnemonicParsing="false" text="Double" />
-                        <Button fx:id="hitButton" mnemonicParsing="false" text="Hit" />
-                        <Button fx:id="standButton" mnemonicParsing="false" text="Stand" />
+                        <Button fx:id="splitButton" mnemonicParsing="false" onAction="#splitButton" text="Split" />
+                        <Button fx:id="doubleButton" mnemonicParsing="false" onAction="#doubleButton" text="Double" />
+                        <Button fx:id="hitButton" mnemonicParsing="false" onAction="#hitButton" text="Hit" />
+                        <Button fx:id="standButton" mnemonicParsing="false" onAction="#standButton" text="Stand" />
                      </children>
                   </VBox>
                </children></VBox>

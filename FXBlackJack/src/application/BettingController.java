@@ -188,9 +188,21 @@ public class BettingController implements Initializable{
                 loader.setController(gameController);
                 root = loader.load();
                 stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-                scene = new Scene(root);
+                
+                double width = stage.getWidth();
+                double height = stage.getHeight();
+                double x = stage.getX();
+                double y = stage.getY();
+                
+                scene = new Scene(root, width, height);
                 scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
                 stage.setScene(scene);
+                
+                stage.setWidth(width);
+                stage.setHeight(height);
+                stage.setX(x);
+                stage.setY(y);
+                
                 stage.show(); 
             }
             catch (IOException event) {
