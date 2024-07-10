@@ -243,6 +243,7 @@ public class GameController implements Initializable{
         }
         timelineLabel.play();
         
+        
         //check if money to playAgain
         if (game.getPlayer().getBalance() > 0) {
          // Create a timeline to delay for 5 seconds
