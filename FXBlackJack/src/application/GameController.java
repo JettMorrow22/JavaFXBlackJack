@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -93,6 +94,8 @@ public class GameController implements Initializable{
     @FXML
     private Button standButton;
     
+    
+   
     private Game game;
     private Stage stage;
     private Scene scene;
@@ -111,18 +114,91 @@ public class GameController implements Initializable{
     }
 
     public void standButton(ActionEvent e) throws IOException {
-    
+        //player turn is over and go to Dealer
+        dealerAction();
     }
 
     public void hitButton(ActionEvent e) throws IOException {
-        gameOver("Player Has BlackJack");
         //try addind card to player Hand and add card to screen and update Total
     }
     
-    
-    public void updateView() {
-        //i need to update the card images for both dealer and player HBox's
+    public void dealerAction() {
+        //create the dealers best hand
+        if (game.getPlayer().allHandsBusted()) {
+            gameOver(new String[] {"Player Busted"});
+        }
+        else {
+            calculateDealerBestHand();
+            //gameOver(determineWinner());
+        }
     }
+    
+    public void calculateDealerBestHand() {
+        //for showing cards I want to remove the back of card, then show each card
+        //for 1 second
+        
+        //create the best delear hand
+        while (game.calculateHand(game.getDealer().getHand().getList()) < 17) {
+            game.dealDealer();            
+            game.didBust(game.getDealer().getHand().getList());
+        }
+                
+        //show cards on the screen and update total
+        dealerCardBox.getChildren().remove(1);
+        Timeline dealerCards = new Timeline(); 
+        for (int x = 1; x < game.getDealer().getHand().getList().size(); x++) {
+            int index = x;
+            KeyFrame keyFrame = new KeyFrame(Duration.seconds((x + 1) * 0.5), e -> {
+                Image dealerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getDealer().getHand().getList().get(index).getFileName() + ".png"));
+                ImageView dealerImageView1 = new ImageView(dealerCard1);
+                dealerImageView1.setPreserveRatio(true);
+                ImageViewPane dPane1 = new ImageViewPane(dealerImageView1);
+                dealerCardBox.getChildren().add(dPane1);
+                dPane1.prefWidthProperty().bind(dPane1.heightProperty().multiply(.69));
+                
+                dealerHandTotal.setText("Total: " + game.calculateHand(game.getDealer().getHand().getList().subList(0, index + 1)));
+            });
+            dealerCards.getKeyFrames().add(keyFrame);
+        }
+        dealerCards.play();
+    }
+    
+    public String[] determineWinner() {
+        String[] results = new String[2];
+        for (int x = 0; x < game.getPlayer().getHands().size(); x++) {
+            //then hand busted
+            if (game.getPlayer().getHand(x).getDidBust()) {
+                results[x] = "Player Busted";
+                continue;
+            }
+            
+            //dealer busted
+            if (game.getDealer().getHand().getDidBust()) {
+                game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount() * 2);
+                results[x] = "Dealer Busted";
+                continue;
+            }
+            
+            //neither busted compare who is higher
+            if (game.calculateHand(game.getPlayer().getHand(x).getList()) >
+                game.calculateHand(game.getDealer().getHand().getList()) ) {
+                game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount() * 2);
+                results[x] = "Player Wins";
+            }
+            else if (game.calculateHand(game.getPlayer().getHand(x).getList()) <
+                game.calculateHand(game.getDealer().getHand().getList()) ) {
+                results[x] = "Dealer Wins";
+            }
+            else {
+                game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount());
+                results[x] = "Push";
+            }
+        }
+        
+        return results;
+    }
+    
+    
     
     public void checkTwoCard() {
         //Determine what the two cards mean
@@ -131,11 +207,11 @@ public class GameController implements Initializable{
            //push
            if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
                game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
-               gameOver("Push");
+               gameOver(new String[] {"Push"});
            }
            else { //player win
                game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
-               gameOver("Player Has BlackJack");
+               gameOver(new String[] {"Player Has BlackJack"});
            }
         }
         
@@ -151,13 +227,21 @@ public class GameController implements Initializable{
         }
     }
     
-    public void gameOver(String winner) {
+    public void gameOver(String[] winner) {
         //clear both player and dealer hands
         game.getPlayer().getHands().clear();
         game.getDealer().getHand().getList().clear();
         
         //update midelLabel
-        middleLabel.setText(winner);
+        Timeline timelineLabel = new Timeline();
+        for (int x = 0; x < winner.length; x++) {
+            int index = x; // create a final variable for lambda expression
+            KeyFrame keyFrame = new KeyFrame(Duration.seconds(3 * (x + 1)), e -> {
+                middleLabel.setText(winner[index]);
+            });
+            timelineLabel.getKeyFrames().add(keyFrame);
+        }
+        timelineLabel.play();
         
         //check if money to playAgain
         if (game.getPlayer().getBalance() > 0) {
@@ -195,9 +279,9 @@ public class GameController implements Initializable{
             
         }
         else {
-            //do something when we are out of money
-            //TODO
-            //------------------------------------------------------------------
+            dealerVBox.setVisible(false);
+            playerHBox.setVisible(false);
+            middleLabel.setText("You have Officially gone broke...");
         }
          
     }

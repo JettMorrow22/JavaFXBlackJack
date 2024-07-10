@@ -2,6 +2,7 @@ package application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Game {
 
@@ -29,10 +30,15 @@ public class Game {
         player.addToHand(0, deck.deal());
         dealer.addToHand(deck.deal());
         player.addToHand(0, deck.deal());
+        dealer.addToHand(deck.deal()); 
+    }
+    
+    public void dealDealer() {
         dealer.addToHand(deck.deal());
-        
-        //now must show these on the screen
-        //create image views 
+    }
+    
+    public void dealPlayer() {
+        player.addToHand(0, deck.deal());
     }
     
     /**
@@ -56,14 +62,14 @@ public class Game {
     
     
     /**
-     * calculates the total of the hand using cardValues hashMap
-     * @param hand arraylist of hand
+     * calculates the total of the hand using card  Values hashMap
+     * @param list arraylist of hand
      * @return total of hand
      */
-    public int calculateHand(ArrayList<Card> hand) {
+    public int calculateHand(List<Card> list) {
         int sum = 0; 
-        for (int x = 0; x < hand.size(); x++) {
-            sum += cardValues.get(hand.get(x).getValue());
+        for (int x = 0; x < list.size(); x++) {
+            sum += cardValues.get(list.get(x).getValue());
         }
         return sum;
     }

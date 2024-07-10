@@ -38,6 +38,10 @@ public class Hand {
         return hand.get(num);
     }
     
+    public Card getTopCard() {
+        return hand.get(hand.size() - 1);
+    }
+    
     /**
      * Basic getter for betAmount field
      * @return the value of betAmount
