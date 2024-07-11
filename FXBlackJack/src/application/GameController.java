@@ -114,6 +114,10 @@ public class GameController implements Initializable{
     }
 
     public void standButton(ActionEvent e) throws IOException {
+        hitButton.setVisible(false);
+        standButton.setVisible(false);
+        doubleButton.setVisible(false);
+        splitButton.setVisible(false);
         //player turn is over and go to Dealer
         dealerAction();
     }
@@ -128,12 +132,13 @@ public class GameController implements Initializable{
             gameOver(new String[] {"Player Busted"});
         }
         else {
-            calculateDealerBestHand();
-            //gameOver(determineWinner());
+            calculateDealerBestHand(() -> {
+                gameOver(determineWinner());
+            });
         }
     }
     
-    public void calculateDealerBestHand() {
+    public void calculateDealerBestHand(Runnable onComplete) {
         //for showing cards I want to remove the back of card, then show each card
         //for 1 second
         
@@ -160,11 +165,13 @@ public class GameController implements Initializable{
             });
             dealerCards.getKeyFrames().add(keyFrame);
         }
+        
+        dealerCards.setOnFinished(e -> onComplete.run());
         dealerCards.play();
     }
     
     public String[] determineWinner() {
-        String[] results = new String[2];
+        String[] results = new String[game.getPlayer().getHands().size()];
         for (int x = 0; x < game.getPlayer().getHands().size(); x++) {
             //then hand busted
             if (game.getPlayer().getHand(x).getDidBust()) {
@@ -173,7 +180,7 @@ public class GameController implements Initializable{
             }
             
             //dealer busted
-            if (game.getDealer().getHand().getDidBust()) {
+            if (game.calculateHand(game.getDealer().getHand().getList()) > 21) {
                 game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount() * 2);
                 results[x] = "Dealer Busted";
                 continue;
@@ -198,40 +205,7 @@ public class GameController implements Initializable{
         return results;
     }
     
-    
-    
-    public void checkTwoCard() {
-        //Determine what the two cards mean
-        //if player has BJ then pay out and round over unless dealer has BJ
-        if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
-           //push
-           if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
-               game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
-               gameOver(new String[] {"Push"});
-           }
-           else { //player win
-               game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
-               gameOver(new String[] {"Player Has BlackJack"});
-           }
-        }
-        
-        //determine if split button should be displayed or not
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
-                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
-            splitButton.setVisible(false);
-        }
-        
-        //determine if double button should be displayed or not
-        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
-            doubleButton.setVisible(false);
-        }
-    }
-    
-    public void gameOver(String[] winner) {
-        //clear both player and dealer hands
-        game.getPlayer().getHands().clear();
-        game.getDealer().getHand().getList().clear();
-        
+    public void gameOver(String[] winner) {        
         //update midelLabel
         Timeline timelineLabel = new Timeline();
         for (int x = 0; x < winner.length; x++) {
@@ -284,9 +258,41 @@ public class GameController implements Initializable{
             playerHBox.setVisible(false);
             middleLabel.setText("You have Officially gone broke...");
         }
+        
+        //clear hands
+        game.getPlayer().getHands().clear();
+        game.getDealer().getHand().getList().clear();
          
     }
     
+    
+    
+    public void checkTwoCard() {
+        //Determine what the two cards mean
+        //if player has BJ then pay out and round over unless dealer has BJ
+        if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
+           //push
+           if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
+               game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
+               gameOver(new String[] {"Push"});
+           }
+           else { //player win
+               game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
+               gameOver(new String[] {"Player Has BlackJack"});
+           }
+        }
+        
+        //determine if split button should be displayed or not
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
+                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
+            splitButton.setVisible(false);
+        }
+        
+        //determine if double button should be displayed or not
+        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
+            doubleButton.setVisible(false);
+        }
+    }    
      
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
