@@ -110,7 +110,28 @@ public class GameController implements Initializable{
     }
     
     public void doubleButton(ActionEvent e) throws IOException {
+        //take one card, update total
+        game.dealPlayer();
         
+        Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getTopCard().getFileName() + ".png"));
+        ImageView playerImageView1 = new ImageView(playerCard1);
+        playerImageView1.setPreserveRatio(true);
+        ImageViewPane pPane1 = new ImageViewPane(playerImageView1);
+        playerCardBox1.getChildren().add(pPane1);
+        pPane1.prefWidthProperty().bind(pPane1.heightProperty().multiply(.69));
+        
+        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+
+        //double bet
+        game.getPlayer().decreaseBalance(game.getPlayer().getHand(0).getBetAmount());
+        game.getPlayer().getHand(0).setBetAmount(game.getPlayer().getHand(0).getBetAmount() * 2);
+        playerHandBetAmount1.setText("Bet Amount: " + game.getPlayer().getHand(0).getBetAmount());
+        balanceLabel.setText("Balance: " + game.getPlayer().getBalance());
+        
+        if (game.calculateHand(game.getPlayer().getHand(0).getList()) > 21) {
+            game.getPlayer().getHand(0).setDidBust(true);
+        }
+        standButton(e);
     }
 
     public void standButton(ActionEvent e) throws IOException {
@@ -124,6 +145,43 @@ public class GameController implements Initializable{
 
     public void hitButton(ActionEvent e) throws IOException {
         //try addind card to player Hand and add card to screen and update Total
+        
+        //must deal another card, add the card to the total
+        game.dealPlayer();
+        
+        Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getTopCard().getFileName() + ".png"));
+        ImageView playerImageView1 = new ImageView(playerCard1);
+        playerImageView1.setPreserveRatio(true);
+        ImageViewPane pPane1 = new ImageViewPane(playerImageView1);
+        playerCardBox1.getChildren().add(pPane1);
+        pPane1.prefWidthProperty().bind(pPane1.heightProperty().multiply(.69));
+        
+        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+        
+        //if busted then player over and game over
+        if (game.didBust(game.getPlayer().getHand(0).getList())) {
+            splitButton.setVisible(false);
+            doubleButton.setVisible(false);
+            hitButton.setVisible(false);
+            standButton.setVisible(false);
+            game.getPlayer().getHand(0).setDidBust(true);
+            gameOver(determineWinner());
+        }
+        else if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
+            splitButton.setVisible(false);
+            doubleButton.setVisible(false);
+            hitButton.setVisible(false);
+            standButton.setVisible(false);
+            calculateDealerBestHand(() -> {
+                gameOver(determineWinner());
+            });
+            
+        }
+        else {
+            splitButton.setVisible(false);
+            doubleButton.setVisible(false);
+        }
+    
     }
     
     public void dealerAction() {
@@ -173,7 +231,7 @@ public class GameController implements Initializable{
     public String[] determineWinner() {
         String[] results = new String[game.getPlayer().getHands().size()];
         for (int x = 0; x < game.getPlayer().getHands().size(); x++) {
-            //then hand busted
+            //player hand busted
             if (game.getPlayer().getHand(x).getDidBust()) {
                 results[x] = "Player Busted";
                 continue;
@@ -205,7 +263,11 @@ public class GameController implements Initializable{
         return results;
     }
     
-    public void gameOver(String[] winner) {        
+    public void gameOver(String[] winner) {  
+        //clear player and dealer hands
+        game.getPlayer().getHands().clear();
+        game.getDealer().getHand().getList().clear();
+        
         //update midelLabel
         Timeline timelineLabel = new Timeline();
         for (int x = 0; x < winner.length; x++) {
@@ -217,52 +279,51 @@ public class GameController implements Initializable{
         }
         timelineLabel.play();
         
-        
-        //check if money to playAgain
-        if (game.getPlayer().getBalance() > 0) {
-         // Create a timeline to delay for 5 seconds
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
-              //switch to betting screen
+        //go to betting screen
+        Timeline timelineScreen = new Timeline();
+        timelineLabel.setOnFinished(event -> {
+            //check if money to playAgain
+            if (game.getPlayer().getBalance() > 0) {
+                // Create a timeline to delay for 5 seconds
+                KeyFrame newScreenKeyFrame = new KeyFrame(Duration.seconds(3), e -> {
+                //switch to betting screen
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("BettingScreen.fxml"));
                     BettingController bettingController = new BettingController(game);
                     loader.setController(bettingController);
                     root = loader.load();
                     stage = (Stage)stackPane.getScene().getWindow();
-                    
+                        
                     double width = stage.getWidth();
                     double height = stage.getHeight();
                     double x = stage.getX();
                     double y = stage.getY();
-                    
+                     
                     scene = new Scene(root);
                     scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
                     stage.setScene(scene);
-                    
+                     
                     stage.setWidth(width);
                     stage.setHeight(height);
                     stage.setX(x);
                     stage.setY(y);
-                    
+                      
                     stage.show(); 
-                }
-                catch (IOException event) {
-                    event.printStackTrace();
-                }
-            }));
-            timeline.play();
-            
-        }
-        else {
-            dealerVBox.setVisible(false);
-            playerHBox.setVisible(false);
-            middleLabel.setText("You have Officially gone broke...");
-        }
-        
-        //clear hands
-        game.getPlayer().getHands().clear();
-        game.getDealer().getHand().getList().clear();
-         
+                    }
+                    catch (IOException error) {
+                        error.printStackTrace();
+                    }
+                });
+                timelineScreen.getKeyFrames().add(newScreenKeyFrame);
+                timelineScreen.play();
+                
+            }
+            else {
+                dealerVBox.setVisible(false);
+                playerHBox.setVisible(false);
+                middleLabel.setText("You have Officially gone broke...");
+            }
+        });
     }
     
     
