@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,6 +95,11 @@ public class GameController implements Initializable{
     @FXML
     private Button standButton;
     
+    //containers for playerCardBox2
+    private VBox playerVBox2;
+    private HBox playerCardBox2;
+    private Label playerTotal2;
+    private Label playerBetAmount2;
     
    
     private Game game;
@@ -106,6 +112,7 @@ public class GameController implements Initializable{
     }
     
     public void splitButton(ActionEvent e) throws IOException {
+        //create new containers for playerCardBox2
         
     }
     
@@ -155,6 +162,10 @@ public class GameController implements Initializable{
         ImageViewPane pPane1 = new ImageViewPane(playerImageView1);
         playerCardBox1.getChildren().add(pPane1);
         pPane1.prefWidthProperty().bind(pPane1.heightProperty().multiply(.69));
+        
+        if ( game.hasAce(game.getPlayer().getHand(0).getList())) {
+            game.changeAceToSoft(game.getPlayer().getHand(0).getList());
+        }
         
         playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
         
@@ -330,6 +341,18 @@ public class GameController implements Initializable{
     
     public void checkTwoCard() {
         //Determine what the two cards mean
+
+        //determine if split button should be displayed or not
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
+                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
+            splitButton.setVisible(false);
+        }
+        
+        //determine if double button should be displayed or not
+        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
+            doubleButton.setVisible(false);
+        }
+        
         //if player has BJ then pay out and round over unless dealer has BJ
         if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
            //push
@@ -341,17 +364,6 @@ public class GameController implements Initializable{
                game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
                gameOver(new String[] {"Player Has BlackJack"});
            }
-        }
-        
-        //determine if split button should be displayed or not
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
-                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
-            splitButton.setVisible(false);
-        }
-        
-        //determine if double button should be displayed or not
-        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
-            doubleButton.setVisible(false);
         }
     }    
      
@@ -451,6 +463,13 @@ public class GameController implements Initializable{
         splitButton.prefHeightProperty().bind(buttonVBox.heightProperty().divide(5));
         splitButton.prefWidthProperty().bind(splitButton.heightProperty());  
         
-        checkTwoCard();
+        
+        //this ensures all components are fully initialized then
+        //checkTwoCard is called
+        Platform.runLater(() -> {
+            checkTwoCard();
+        }
+        );
+         
     }
 }

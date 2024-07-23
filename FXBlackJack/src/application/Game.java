@@ -1,8 +1,6 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Game {
 
@@ -18,12 +16,7 @@ public class Game {
         dealer = new Dealer();
         deck = new Deck();
         cardValues = createCardValuesMap();
-    }
-
-    public void startGame() {
-        //must start betting
-    }
-    
+    }    
     
     public void bettingCycle() {
         //firstly add card to dealer and player hands
