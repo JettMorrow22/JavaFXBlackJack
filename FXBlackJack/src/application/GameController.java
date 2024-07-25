@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,6 +27,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -69,10 +71,10 @@ public class GameController implements Initializable{
     private HBox playerCardBox1;
     
     @FXML
-    private Label playerHandTotal1;
+    private Label playerTotal1;
     
     @FXML
-    private Label playerHandBetAmount1;
+    private Label playerBetAmount1;
     
     @FXML
     private VBox rightVBox;
@@ -101,6 +103,8 @@ public class GameController implements Initializable{
     private Label playerTotal2;
     private Label playerBetAmount2;
     
+    private int curHand = 0;
+    
    
     private Game game;
     private Stage stage;
@@ -111,88 +115,192 @@ public class GameController implements Initializable{
         game  = g; 
     }
     
+    public void addCardToPlayerBox(int hand) {
+        //create container with image and add to scene and update Total
+        Image playerCard = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(hand).getTopCard().getFileName() + ".png"));
+        ImageView playerImageView = new ImageView(playerCard);
+        playerImageView.setPreserveRatio(true);
+        ImageViewPane pPane = new ImageViewPane(playerImageView);
+        pPane.prefWidthProperty().bind(pPane.heightProperty().multiply(.69));
+        
+        if (hand == 0) {
+            playerCardBox1.getChildren().add(pPane);
+            playerTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+            
+        }
+        else {
+            playerCardBox2.getChildren().add(pPane);
+            playerTotal2.setText("Total: " + game.calculateHand(game.getPlayer().getHand(1).getList()));
+
+        }
+    }
+    
     public void splitButton(ActionEvent e) throws IOException {
+        //Create the second hand
+        game.getPlayer().createHand();
+        game.getPlayer().addToHand(1, game.getPlayer().getHand(0).getList().remove(1));
+        game.getPlayer().getHand(1).setBetAmount(game.getPlayer().getHand(0).getBetAmount());
+        game.getPlayer().decreaseBalance(game.getPlayer().getHand(0).getBetAmount());
+        balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
+        
         //create new containers for playerCardBox2
+        playerVBox2 = new VBox();
+        playerCardBox2 = new HBox();
+        playerTotal2 = new Label("Total: " + game.calculateHand(game.getPlayer().getHand(1).getList()));
+        playerTotal2.setFont(new Font(20));
+        playerTotal2.setStyle("-fx-text-fill: ffc000;");
+
+        playerBetAmount2 = new Label("Bet Amount: $" + game.getPlayer().getHand(1).getBetAmount());
+        playerBetAmount2.setFont(new Font(20));
+        playerBetAmount2.setStyle("-fx-text-fill: ffc000;");
+        
+        //bind the dimensions
+        playerVBox2.prefWidthProperty().bind(playerHBox.widthProperty().divide(playerHBox.getChildren().size()));
+        playerCardBox2.prefHeightProperty().bind(playerVBox2.heightProperty().multiply(.8));
+        playerCardBox2.prefWidthProperty().bind(playerVBox2.widthProperty());
+        playerBetAmount2.prefHeightProperty().bind(playerVBox2.heightProperty().multiply(.2));
+        playerBetAmount2.prefWidthProperty().bind(playerVBox2.widthProperty());
+
+        //remove second card from first hand
+        playerCardBox1.getChildren().remove(1);
+        
+        //update firstHand total
+        playerTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+            
+        //add card image to second hand
+        playerCardBox2.setAlignment(Pos.CENTER);
+        addCardToPlayerBox(1);
+        
+        //add new container to the left on HBox
+        playerVBox2.setAlignment(Pos.CENTER);
+        playerBetAmount2.setAlignment(Pos.CENTER);
+        playerVBox2.getChildren().addAll(playerCardBox2, playerTotal2, playerBetAmount2);        
+        playerHBox.setAlignment(Pos.CENTER);
+        playerHBox.getChildren().add(0, playerVBox2);
+        
+        //NOW I mut play out each hand
+        splitButton.setVisible(false);
+        
+        //deal first card
+        hitButton(e);
+        
+        if (game.getPlayer().getBalance() >= game.getPlayer().getHand(curHand).getBetAmount()) {
+            doubleButton.setVisible(true);
+        }
         
     }
     
     public void doubleButton(ActionEvent e) throws IOException {
         //take one card, update total
-        game.dealPlayer();
+        game.dealPlayer(curHand);
+        addCardToPlayerBox(curHand);
         
-        Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getTopCard().getFileName() + ".png"));
-        ImageView playerImageView1 = new ImageView(playerCard1);
-        playerImageView1.setPreserveRatio(true);
-        ImageViewPane pPane1 = new ImageViewPane(playerImageView1);
-        playerCardBox1.getChildren().add(pPane1);
-        pPane1.prefWidthProperty().bind(pPane1.heightProperty().multiply(.69));
-        
-        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
-
         //double bet
-        game.getPlayer().decreaseBalance(game.getPlayer().getHand(0).getBetAmount());
-        game.getPlayer().getHand(0).setBetAmount(game.getPlayer().getHand(0).getBetAmount() * 2);
-        playerHandBetAmount1.setText("Bet Amount: " + game.getPlayer().getHand(0).getBetAmount());
-        balanceLabel.setText("Balance: " + game.getPlayer().getBalance());
+        game.getPlayer().decreaseBalance(game.getPlayer().getHand(curHand).getBetAmount());
+        game.getPlayer().getHand(curHand).setBetAmount(game.getPlayer().getHand(curHand).getBetAmount() * 2);
         
-        if (game.calculateHand(game.getPlayer().getHand(0).getList()) > 21) {
-            game.getPlayer().getHand(0).setDidBust(true);
+        //update Betamount
+        if ( curHand == 0) {
+            playerBetAmount1.setText("Bet Amount: " + game.getPlayer().getHand(curHand).getBetAmount());
         }
+        else {
+            playerBetAmount2.setText("Bet Amount: " + game.getPlayer().getHand(curHand).getBetAmount());
+        }
+        balanceLabel.setText("Balance: " + game.getPlayer().getBalance());
+                
+        if (game.didBust(game.getPlayer().getHand(curHand).getList())) {
+            game.getPlayer().getHand(curHand).setDidBust(true);
+        }
+        
+        //the current hand is done, if there is another hand and enough money
+        //display double button again
         standButton(e);
     }
 
     public void standButton(ActionEvent e) throws IOException {
-        hitButton.setVisible(false);
-        standButton.setVisible(false);
-        doubleButton.setVisible(false);
-        splitButton.setVisible(false);
-        //player turn is over and go to Dealer
-        dealerAction();
+        
+        if ( curHand + 1 == game.getPlayer().getHands().size()) {
+            //player turn is over and go to Dealer
+            hitButton.setVisible(false);
+            standButton.setVisible(false);
+            doubleButton.setVisible(false);
+            splitButton.setVisible(false);
+            dealerAction();
+        }
+        else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
+            curHand++;
+            hitButton(e);
+        }
+        else {
+            curHand++;
+            hitButton(e);
+            doubleButton.setVisible(true);
+        }
+         
+        
+        
     }
 
     public void hitButton(ActionEvent e) throws IOException {
         //try addind card to player Hand and add card to screen and update Total
         
         //must deal another card, add the card to the total
-        game.dealPlayer();
+        game.dealPlayer(curHand);
         
-        Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getTopCard().getFileName() + ".png"));
-        ImageView playerImageView1 = new ImageView(playerCard1);
-        playerImageView1.setPreserveRatio(true);
-        ImageViewPane pPane1 = new ImageViewPane(playerImageView1);
-        playerCardBox1.getChildren().add(pPane1);
-        pPane1.prefWidthProperty().bind(pPane1.heightProperty().multiply(.69));
-        
-        if ( game.hasAce(game.getPlayer().getHand(0).getList())) {
-            game.changeAceToSoft(game.getPlayer().getHand(0).getList());
+        if (game.calculateHand(game.getPlayer().getHand(curHand).getList()) > 21 &&
+            game.hasAce(game.getPlayer().getHand(curHand).getList())) {
+            game.changeAceToSoft(game.getPlayer().getHand(curHand).getList());
         }
         
-        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+        //add card and update Label
+        addCardToPlayerBox(curHand);        
         
-        //if busted then player over and game over
-        if (game.didBust(game.getPlayer().getHand(0).getList())) {
-            splitButton.setVisible(false);
-            doubleButton.setVisible(false);
-            hitButton.setVisible(false);
-            standButton.setVisible(false);
-            game.getPlayer().getHand(0).setDidBust(true);
-            gameOver(determineWinner());
-        }
-        else if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
-            splitButton.setVisible(false);
-            doubleButton.setVisible(false);
-            hitButton.setVisible(false);
-            standButton.setVisible(false);
-            calculateDealerBestHand(() -> {
-                gameOver(determineWinner());
-            });
+        //if busted then player hand over
+        if (game.didBust(game.getPlayer().getHand(curHand).getList())) {
             
+            game.getPlayer().getHand(curHand).setDidBust(true);
+            //if we on the last hand then we done
+            if ( curHand + 1 == game.getPlayer().getHands().size()) {
+                splitButton.setVisible(false);
+                doubleButton.setVisible(false);
+                hitButton.setVisible(false);
+                standButton.setVisible(false);
+                dealerAction();
+            }
+            else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
+                doubleButton.setVisible(false);
+                curHand++;
+                hitButton(e);
+            }
+            else {
+                doubleButton.setVisible(true);
+                curHand++;
+                hitButton(e);
+            }
+        }
+        else if (game.calculateHand(game.getPlayer().getHand(curHand).getList()) == 21) {
+            if ( curHand + 1 == game.getPlayer().getHands().size()) {
+                splitButton.setVisible(false);
+                doubleButton.setVisible(false);
+                hitButton.setVisible(false);
+                standButton.setVisible(false);
+                dealerAction();
+            }
+            else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
+                doubleButton.setVisible(false);
+                curHand++;
+                hitButton(e);
+            }
+            else {
+                doubleButton.setVisible(true);
+                curHand++;
+                hitButton(e);
+            }
         }
         else {
             splitButton.setVisible(false);
             doubleButton.setVisible(false);
         }
-    
     }
     
     public void dealerAction() {
@@ -344,7 +452,8 @@ public class GameController implements Initializable{
 
         //determine if split button should be displayed or not
         if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
-                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())) {
+                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())
+                || game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
             splitButton.setVisible(false);
         }
         
@@ -356,6 +465,11 @@ public class GameController implements Initializable{
         //if player has BJ then pay out and round over unless dealer has BJ
         if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
            //push
+            splitButton.setVisible(false);
+            doubleButton.setVisible(false);
+            hitButton.setVisible(false);
+            standButton.setVisible(false);
+            
            if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
                game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
                gameOver(new String[] {"Push"});
@@ -396,11 +510,11 @@ public class GameController implements Initializable{
         playerVBox1.prefHeightProperty().bind(playerHBox.heightProperty());
         playerVBox1.prefWidthProperty().bind(playerHBox.widthProperty().divide(playerHBox.getChildren().size()));
         
-        //player and dealer card boxes
+        //player
         playerCardBox1.prefHeightProperty().bind(playerVBox1.heightProperty().multiply(.8));
         playerCardBox1.prefWidthProperty().bind(playerVBox1.widthProperty());
-        playerHandTotal1.prefHeightProperty().bind(playerVBox1.heightProperty().multiply(.2));
-        playerHandTotal1.prefWidthProperty().bind(playerVBox1.widthProperty());
+        playerTotal1.prefHeightProperty().bind(playerVBox1.heightProperty().multiply(.2));
+        playerTotal1.prefWidthProperty().bind(playerVBox1.widthProperty());
         
         //load player cards
         Image playerCard1 = new Image(getClass().getResourceAsStream("/images/PNG-cards/" + game.getPlayer().getHand(0).getCard(0).getFileName() + ".png"));
@@ -416,8 +530,8 @@ public class GameController implements Initializable{
         pane1.prefWidthProperty().bind(pane1.heightProperty().multiply(.69));
         pane2.prefWidthProperty().bind(pane2.heightProperty().multiply(.69));
         
-        playerHandBetAmount1.setText("Bet Amount: $" + game.getPlayer().getHand(0).getBetAmount());
-        playerHandTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
+        playerBetAmount1.setText("Bet Amount: $" + game.getPlayer().getHand(0).getBetAmount());
+        playerTotal1.setText("Total: " + game.calculateHand(game.getPlayer().getHand(0).getList()));
         
         //load dealer cards 
         dealerCardBox.prefHeightProperty().bind(dealerVBox.heightProperty().multiply(.8));

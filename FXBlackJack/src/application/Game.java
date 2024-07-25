@@ -30,8 +30,8 @@ public class Game {
         dealer.addToHand(deck.deal());
     }
     
-    public void dealPlayer() {
-        player.addToHand(0, deck.deal());
+    public void dealPlayer(int hand) {
+        player.addToHand(hand, deck.deal());
     }
     
     /**
