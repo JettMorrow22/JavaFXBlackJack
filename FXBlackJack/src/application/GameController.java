@@ -147,12 +147,12 @@ public class GameController implements Initializable{
         playerVBox2 = new VBox();
         playerCardBox2 = new HBox();
         playerTotal2 = new Label("Total: " + game.calculateHand(game.getPlayer().getHand(1).getList()));
-        playerTotal2.setFont(new Font(20));
-        playerTotal2.setStyle("-fx-text-fill: ffc000;");
+        playerTotal2.getStyleClass().add("custom-label");
 
         playerBetAmount2 = new Label("Bet Amount: $" + game.getPlayer().getHand(1).getBetAmount());
         playerBetAmount2.setFont(new Font(20));
-        playerBetAmount2.setStyle("-fx-text-fill: ffc000;");
+        playerBetAmount2.getStyleClass().add("custom-label");
+
         
         //bind the dimensions
         playerVBox2.prefWidthProperty().bind(playerHBox.widthProperty().divide(playerHBox.getChildren().size()));
@@ -199,7 +199,7 @@ public class GameController implements Initializable{
         game.getPlayer().decreaseBalance(game.getPlayer().getHand(curHand).getBetAmount());
         game.getPlayer().getHand(curHand).setBetAmount(game.getPlayer().getHand(curHand).getBetAmount() * 2);
         
-        //update Betamount
+        //update BetAmount
         if ( curHand == 0) {
             playerBetAmount1.setText("Bet Amount: " + game.getPlayer().getHand(curHand).getBetAmount());
         }
@@ -207,38 +207,27 @@ public class GameController implements Initializable{
             playerBetAmount2.setText("Bet Amount: " + game.getPlayer().getHand(curHand).getBetAmount());
         }
         balanceLabel.setText("Balance: " + game.getPlayer().getBalance());
-                
-        if (game.didBust(game.getPlayer().getHand(curHand).getList())) {
-            game.getPlayer().getHand(curHand).setDidBust(true);
-        }
+
+        game.getPlayer().getHand(curHand).setDidBust(game.didBust(game.getPlayer().getHand(curHand).getList()));
         
-        //the current hand is done, if there is another hand and enough money
-        //display double button again
         standButton(e);
     }
 
     public void standButton(ActionEvent e) throws IOException {
         
+        //if we on the last hand then we done
         if ( curHand + 1 == game.getPlayer().getHands().size()) {
-            //player turn is over and go to Dealer
+            splitButton.setVisible(false);
+            doubleButton.setVisible(false);
             hitButton.setVisible(false);
             standButton.setVisible(false);
-            doubleButton.setVisible(false);
-            splitButton.setVisible(false);
             dealerAction();
         }
-        else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
-            curHand++;
-            hitButton(e);
-        }
         else {
+            doubleButton.setVisible(game.getPlayer().getBalance() >= game.getPlayer().getHand(curHand).getBetAmount());
             curHand++;
             hitButton(e);
-            doubleButton.setVisible(true);
         }
-         
-        
-        
     }
 
     public void hitButton(ActionEvent e) throws IOException {
@@ -257,45 +246,11 @@ public class GameController implements Initializable{
         
         //if busted then player hand over
         if (game.didBust(game.getPlayer().getHand(curHand).getList())) {
-            
             game.getPlayer().getHand(curHand).setDidBust(true);
-            //if we on the last hand then we done
-            if ( curHand + 1 == game.getPlayer().getHands().size()) {
-                splitButton.setVisible(false);
-                doubleButton.setVisible(false);
-                hitButton.setVisible(false);
-                standButton.setVisible(false);
-                dealerAction();
-            }
-            else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
-                doubleButton.setVisible(false);
-                curHand++;
-                hitButton(e);
-            }
-            else {
-                doubleButton.setVisible(true);
-                curHand++;
-                hitButton(e);
-            }
+            standButton(e);            
         }
         else if (game.calculateHand(game.getPlayer().getHand(curHand).getList()) == 21) {
-            if ( curHand + 1 == game.getPlayer().getHands().size()) {
-                splitButton.setVisible(false);
-                doubleButton.setVisible(false);
-                hitButton.setVisible(false);
-                standButton.setVisible(false);
-                dealerAction();
-            }
-            else if (game.getPlayer().getBalance() < game.getPlayer().getHand(curHand).getBetAmount()) {
-                doubleButton.setVisible(false);
-                curHand++;
-                hitButton(e);
-            }
-            else {
-                doubleButton.setVisible(true);
-                curHand++;
-                hitButton(e);
-            }
+            standButton(e);
         }
         else {
             splitButton.setVisible(false);
@@ -451,15 +406,15 @@ public class GameController implements Initializable{
         //Determine what the two cards mean
 
         //determine if split button should be displayed or not
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) !=
-                game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue())
-                || game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
-            splitButton.setVisible(false);
+        if ( game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) == 
+             game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue()) && 
+                game.getPlayer().getBalance() >= game.getPlayer().getHand(0).getBetAmount()) {
+            splitButton.setVisible(true);
         }
         
         //determine if double button should be displayed or not
-        if ( game.getPlayer().getBalance() < game.getPlayer().getHand(0).getBetAmount()) {
-            doubleButton.setVisible(false);
+        if ( game.getPlayer().getBalance() >= game.getPlayer().getHand(0).getBetAmount()) {
+            doubleButton.setVisible(true);
         }
         
         //if player has BJ then pay out and round over unless dealer has BJ
@@ -475,7 +430,7 @@ public class GameController implements Initializable{
                gameOver(new String[] {"Push"});
            }
            else { //player win
-               game.getPlayer().increaseBalance((3 * game.getPlayer().getHand(0).getBetAmount()) / 2);
+               game.getPlayer().increaseBalance((5 * game.getPlayer().getHand(0).getBetAmount()) / 2);
                gameOver(new String[] {"Player Has BlackJack"});
            }
         }

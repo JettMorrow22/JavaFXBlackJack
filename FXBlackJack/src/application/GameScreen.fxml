@@ -59,8 +59,8 @@
                   <ImageView fx:id="deckImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                   <VBox fx:id="buttonVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="splitButton" mnemonicParsing="false" onAction="#splitButton" text="Split" />
-                        <Button fx:id="doubleButton" mnemonicParsing="false" onAction="#doubleButton" text="Double" />
+                        <Button fx:id="splitButton" mnemonicParsing="false" onAction="#splitButton" text="Split" visible="false" />
+                        <Button fx:id="doubleButton" mnemonicParsing="false" onAction="#doubleButton" text="Double" visible="false" />
                         <Button fx:id="hitButton" mnemonicParsing="false" onAction="#hitButton" text="Hit" />
                         <Button fx:id="standButton" mnemonicParsing="false" onAction="#standButton" text="Stand" />
                      </children>

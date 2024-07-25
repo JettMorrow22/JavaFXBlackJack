@@ -24,19 +24,6 @@ public class Player {
     }
     
     /**
-     * function to calculate the total amount of bets per hand
-     * @return the total amount of bets
-     * 
-     */
-    public int handBetTotals() {
-        int sum = 0;
-        for ( int x = 0; x < hands.size(); x ++) {
-            sum += hands.get(x).getBetAmount();
-        }
-        return sum;
-    }
-    
-    /**
      * Adds hand to the player Hands
      */
     public void createHand() {

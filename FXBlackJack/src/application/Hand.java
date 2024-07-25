@@ -16,20 +16,6 @@ public class Hand {
     }
     
     /**
-     * Method to display the cards in a hand
-     * @param hand hand to be displayed
-     * @return string displaying the hand
-     */
-    public String showHand() {
-        String curHand = "";
-        for( int x = 0; x < hand.size() - 1; x++) {
-            curHand += hand.get(x).getValue() + ",";
-        }
-        curHand += hand.get(hand.size()-1).getValue();
-        return curHand;
-    }
-    
-    /**
      * Returns the specific card of the hand
      * @param num the card to be selected
      * @return the num-th card of the hand
@@ -71,15 +57,6 @@ public class Hand {
      */
     public void addToHand(Card card) {
         hand.add(card);
-    }
-    
-    /**
-     * Determines if the hand is perfect pair
-     * @return true if pairs
-     */
-    public boolean canSplit() {
-        return hand.size() == 2 && 
-            hand.get(0).equals(hand.get(1));
     }
 
     /**

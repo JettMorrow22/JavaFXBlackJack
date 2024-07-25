@@ -2,3 +2,9 @@
 	-fx-background-radius: 50%;
 	
 }
+
+.custom-label {
+    -fx-font-family: system-ui, sans-serif; /* Font family */
+    -fx-font-size: 20px; /* Font size */
+    -fx-text-fill: #ffc000; /* Text color */
+}

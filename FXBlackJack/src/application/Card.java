@@ -39,26 +39,4 @@ public class Card {
     public void setValue( String s) {
         value = s;
     }
-    
-    /**
-     * Override equals method to determine if two cards are the same
-     * two cards are the same if their value is the same
-     * @param o the object we are determining if it is equal or not
-     * @return true if equal false if not
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        //a Card is equal if there value are the same
-        if (this.getClass() == o.getClass()) {
-            Card temp = (Card)o;
-            return (this.getValue().equals(temp.getValue()));
-        }
-        return false;
-    }
 }
