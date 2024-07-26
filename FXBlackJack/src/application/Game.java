@@ -9,8 +9,13 @@ public class Game {
     private Deck deck;
     
     private static HashMap<String, Integer> cardValues;
-
     
+    private double handsPlayed = 0;
+    private double won = 0;
+    private double lost = 0;
+    private double pushed = 0;
+
+
     public Game() {
         player = new Player();
         dealer = new Dealer();
@@ -128,5 +133,36 @@ public class Game {
 
     public Deck getDeck() {
         return deck;
+    }
+    public double getHandsPlayed() {
+        return handsPlayed;
+    }
+
+    public double getWon() {
+        return won;
+    }
+
+    public double getLost() {
+        return lost;
+    }
+
+    public double getPushed() {
+        return pushed;
+    }
+
+
+    public void incrementWon() {
+        won++;
+        handsPlayed++;
+    }
+
+    public void incrementLost() {
+        lost++;
+        handsPlayed++;
+    }
+
+    public void incrementPushed() {
+        pushed++;
+        handsPlayed++;
     }
 }

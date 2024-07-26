@@ -43,9 +43,6 @@ public class GameController implements Initializable{
     private HBox rootHBox;
     
     @FXML
-    private Label balanceLabel;
-    
-    @FXML
     private VBox middleVBox;
     
     //three main container for middle VBox
@@ -87,15 +84,26 @@ public class GameController implements Initializable{
     
     @FXML
     private Button splitButton;
-    
     @FXML
     private Button doubleButton;
-    
     @FXML
     private Button hitButton;
-    
     @FXML
     private Button standButton;
+    
+    @FXML
+    private VBox labelVBox;
+   
+    @FXML
+    private Label balanceLabel;
+    @FXML
+    private Label gamesLabel;
+    @FXML
+    private Label wonLabel;
+    @FXML
+    private Label lostLabel;
+    @FXML
+    private Label pushLabel;
     
     //containers for playerCardBox2
     private VBox playerVBox2;
@@ -263,6 +271,10 @@ public class GameController implements Initializable{
         //create the dealers best hand
         if (game.getPlayer().allHandsBusted()) {
             gameOver(new String[] {"Player Busted"});
+            //add to lost
+            for (int x = 0; x < game.getPlayer().getHands().size(); x++) {
+                game.incrementLost();
+            }
         }
         else {
             calculateDealerBestHand(() -> {
@@ -274,8 +286,8 @@ public class GameController implements Initializable{
     public void calculateDealerBestHand(Runnable onComplete) {
         
         //annoying edge case if they have two Aces
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) == 'A' && 
-             game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue()) == 'A') {
+        if (game.getPlayer().getHand(0).getCard(0).getValue().equals("A") && 
+             game.getPlayer().getHand(0).getCard(1).getValue().equals("A") ){
             game.getPlayer().getHand(0).getCard(1).setValue("a");
         }
         
@@ -313,6 +325,7 @@ public class GameController implements Initializable{
             //player hand busted
             if (game.getPlayer().getHand(x).getDidBust()) {
                 results[x] = "Player Busted";
+                game.incrementLost();
                 continue;
             }
             
@@ -320,6 +333,7 @@ public class GameController implements Initializable{
             if (game.calculateHand(game.getDealer().getHand().getList()) > 21) {
                 game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount() * 2);
                 results[x] = "Dealer Busted";
+                game.incrementWon();
                 continue;
             }
             
@@ -328,15 +342,20 @@ public class GameController implements Initializable{
                 game.calculateHand(game.getDealer().getHand().getList()) ) {
                 game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount() * 2);
                 results[x] = "Player Wins";
+                game.incrementWon();
             }
             else if (game.calculateHand(game.getPlayer().getHand(x).getList()) <
                 game.calculateHand(game.getDealer().getHand().getList()) ) {
                 results[x] = "Dealer Wins";
+                game.incrementLost();
             }
             else {
                 game.getPlayer().increaseBalance(game.getPlayer().getHand(x).getBetAmount());
                 results[x] = "Push";
+                game.incrementPushed();
             }
+            
+            //increase Hand played
         }
         
         return results;
@@ -423,8 +442,8 @@ public class GameController implements Initializable{
         }
         
         //annoying edge case if they have two Aces
-        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) == 'A' && 
-             game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue()) == 'A') {
+        if (game.getPlayer().getHand(0).getCard(0).getValue().equals("A") && 
+             game.getPlayer().getHand(0).getCard(1).getValue().equals("A") ){
             game.getPlayer().getHand(0).getCard(1).setValue("a");
         }
         
@@ -438,10 +457,12 @@ public class GameController implements Initializable{
             
            if (game.calculateHand(game.getDealer().getHand().getList()) == 21) {
                game.getPlayer().increaseBalance(game.getPlayer().getHand(0).getBetAmount());
+               game.incrementPushed();
                gameOver(new String[] {"Push"});
            }
            else { //player win
                game.getPlayer().increaseBalance((5 * game.getPlayer().getHand(0).getBetAmount()) / 2);
+               game.incrementWon();
                gameOver(new String[] {"Player Has BlackJack"});
            }
         }
@@ -452,6 +473,12 @@ public class GameController implements Initializable{
         game.bettingCycle();
         
         balanceLabel.setText("Balance: $" + game.getPlayer().getBalance());
+        if (game.getHandsPlayed() > 0) {
+            gamesLabel.setText(String.format("Hands Played: %.0f", game.getHandsPlayed()));
+            wonLabel.setText(String.format("won: %.0f%%", game.getWon() / game.getHandsPlayed() * 100));
+            lostLabel.setText(String.format("lost: %.0f%%", game.getLost() / game.getHandsPlayed() * 100));
+            pushLabel.setText(String.format("pushed: %.0f%%", game.getPushed() / game.getHandsPlayed() * 100));
+        }
         
         //this makes the imageView the size of the stackPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
@@ -459,8 +486,8 @@ public class GameController implements Initializable{
         imageView.setImage(new Image(getClass().getResource("/images/blackjack_Background_Image.jpg").toString()));
 
         //HBox children to take up equal width and full height
-        balanceLabel.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.2));
-        balanceLabel.prefHeightProperty().bind(rootHBox.heightProperty());
+        labelVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.2));
+        labelVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         middleVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.5));
         middleVBox.prefHeightProperty().bind(rootHBox.heightProperty());
         rightVBox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(.3));

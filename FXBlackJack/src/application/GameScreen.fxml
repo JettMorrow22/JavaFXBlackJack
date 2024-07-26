@@ -14,10 +14,35 @@
       </ImageView>
       <HBox fx:id="rootHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
          <children>
-            <Label fx:id="balanceLabel" text="Balance: " textFill="#ffc000">
-               <font>
-                  <Font name="System Bold" size="28.0" />
-               </font></Label>
+            <VBox fx:id="labelVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label fx:id="balanceLabel" text="Balance: " textFill="#ffc000">
+                     <font>
+                        <Font name="System Bold" size="28.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="gamesLabel" text="Hands Played: " textFill="#ffc000">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="wonLabel" text="Win Percentage: " textFill="#ffc000">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lostLabel" text="Loss Percentage: " textFill="#ffc000">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="pushLabel" text="Pushed Percentage: " textFill="#ffc000">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
             <VBox fx:id="middleVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox fx:id="dealerVBox" alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
