@@ -193,6 +193,9 @@ public class GameController implements Initializable{
     public void doubleButton(ActionEvent e) throws IOException {
         //take one card, update total
         game.dealPlayer(curHand);
+        
+        game.getPlayer().getHand(curHand).setDidBust(game.didBust(game.getPlayer().getHand(curHand).getList()));
+        
         addCardToPlayerBox(curHand);
         
         //double bet
@@ -224,9 +227,9 @@ public class GameController implements Initializable{
             dealerAction();
         }
         else {
-            doubleButton.setVisible(game.getPlayer().getBalance() >= game.getPlayer().getHand(curHand).getBetAmount());
             curHand++;
             hitButton(e);
+            doubleButton.setVisible(game.getPlayer().getBalance() >= game.getPlayer().getHand(curHand).getBetAmount());
         }
     }
 
@@ -236,16 +239,14 @@ public class GameController implements Initializable{
         //must deal another card, add the card to the total
         game.dealPlayer(curHand);
         
-        if (game.calculateHand(game.getPlayer().getHand(curHand).getList()) > 21 &&
-            game.hasAce(game.getPlayer().getHand(curHand).getList())) {
-            game.changeAceToSoft(game.getPlayer().getHand(curHand).getList());
-        }
+        //update if hand busted or not
+        game.getPlayer().getHand(curHand).setDidBust(game.didBust(game.getPlayer().getHand(curHand).getList()));
         
         //add card and update Label
         addCardToPlayerBox(curHand);        
         
         //if busted then player hand over
-        if (game.didBust(game.getPlayer().getHand(curHand).getList())) {
+        if (game.getPlayer().getHand(curHand).getDidBust()) {
             game.getPlayer().getHand(curHand).setDidBust(true);
             standButton(e);            
         }
@@ -271,8 +272,12 @@ public class GameController implements Initializable{
     }
     
     public void calculateDealerBestHand(Runnable onComplete) {
-        //for showing cards I want to remove the back of card, then show each card
-        //for 1 second
+        
+        //annoying edge case if they have two Aces
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) == 'A' && 
+             game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue()) == 'A') {
+            game.getPlayer().getHand(0).getCard(1).setValue("a");
+        }
         
         //create the best delear hand
         while (game.calculateHand(game.getDealer().getHand().getList()) < 17) {
@@ -417,9 +422,15 @@ public class GameController implements Initializable{
             doubleButton.setVisible(true);
         }
         
+        //annoying edge case if they have two Aces
+        if (game.getCardValue(game.getPlayer().getHand(0).getCard(0).getValue()) == 'A' && 
+             game.getCardValue(game.getPlayer().getHand(0).getCard(1).getValue()) == 'A') {
+            game.getPlayer().getHand(0).getCard(1).setValue("a");
+        }
+        
         //if player has BJ then pay out and round over unless dealer has BJ
         if (game.calculateHand(game.getPlayer().getHand(0).getList()) == 21) {
-           //push
+            //push
             splitButton.setVisible(false);
             doubleButton.setVisible(false);
             hitButton.setVisible(false);
