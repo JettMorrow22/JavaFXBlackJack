@@ -41,6 +41,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
+                  <Button fx:id="hintButton" alignment="CENTER" mnemonicParsing="false" onAction="#hintButton" text="Hint...." textAlignment="CENTER" />
                </children>
             </VBox>
             <VBox fx:id="middleVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">

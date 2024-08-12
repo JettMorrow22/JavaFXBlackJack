@@ -6,11 +6,13 @@ import java.util.Collections;
 public class Deck {
 
     private ArrayList<Card> deck;
+    private int cutCard;
     
     
     public Deck() {
         deck = new ArrayList<Card>();
         initalizeDeck();
+        cutCard = (int)Math.random();
         shuffleDeck();
     }
     
@@ -56,10 +58,11 @@ public class Deck {
      * @return the top card of the deck
      */
     public Card deal() {
-        if ( deck.size() < ((6 * 52)/4) ) {
+        if ( deck.size() < ((6 * 52) * cutCard) ) {
             deck.clear();
             initalizeDeck();
             shuffleDeck();
+            cutCard = (int)Math.random();
         }
         return deck.remove(0);
     }

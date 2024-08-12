@@ -104,6 +104,8 @@ public class GameController implements Initializable{
     private Label lostLabel;
     @FXML
     private Label pushLabel;
+    @FXML
+    private Button hintButton;
     
     //containers for playerCardBox2
     private VBox playerVBox2;
@@ -121,6 +123,45 @@ public class GameController implements Initializable{
     
     public GameController(Game g) {
         game  = g; 
+    }
+    
+    public void hintButton(ActionEvent e)throws IOException {
+        String action = game.getBook().decision(game, curHand);
+        //make the button background be bright red for a half second
+        switch (action){
+            case "H":
+                flashButton(hitButton);
+                break;
+            case "S": 
+                flashButton(standButton);
+                break;
+            case "D":
+                if (game.getPlayer().getBalance() >= game.getPlayer().getHand(curHand).getBetAmount()
+                 && game.getPlayer().getHand(curHand).getList().size() == 2) {
+                    flashButton(doubleButton);
+                }
+                else {
+                    flashButton(hitButton);
+                }
+                break;
+            case "P": 
+                flashButton(splitButton);
+                break;
+            default: 
+                System.out.println("What happened");
+        }
+    }
+    
+    public void flashButton( Button button) {
+        String origStyle = button.getStyle();
+        
+        Timeline timeline = new Timeline (
+            new KeyFrame(Duration.seconds(0), e -> button.setStyle("-fx-background-color: red;")),
+            new KeyFrame(Duration.seconds(1), e -> button.setStyle(origStyle))
+        );
+        
+        timeline.play();
+            
     }
     
     public void addCardToPlayerBox(int hand) {
@@ -232,6 +273,7 @@ public class GameController implements Initializable{
             doubleButton.setVisible(false);
             hitButton.setVisible(false);
             standButton.setVisible(false);
+            hintButton.setVisible(false);
             dealerAction();
         }
         else {
@@ -270,11 +312,11 @@ public class GameController implements Initializable{
     public void dealerAction() {
         //create the dealers best hand
         if (game.getPlayer().allHandsBusted()) {
-            gameOver(new String[] {"Player Busted"});
             //add to lost
             for (int x = 0; x < game.getPlayer().getHands().size(); x++) {
                 game.incrementLost();
             }
+            gameOver(new String[] {"Player Busted"});
         }
         else {
             calculateDealerBestHand(() -> {

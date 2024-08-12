@@ -7,6 +7,7 @@ public class Game {
     private Player player;
     private Dealer dealer;
     private Deck deck;
+    private Book book;
     
     private static HashMap<String, Integer> cardValues;
     
@@ -20,6 +21,7 @@ public class Game {
         player = new Player();
         dealer = new Dealer();
         deck = new Deck();
+        book = new Book();
         cardValues = createCardValuesMap();
     }    
     
@@ -121,6 +123,10 @@ public class Game {
         temp.put("A", 11);
         temp.put("a", 1);
         return temp;
+    }
+    
+    public Book getBook() {
+        return book;
     }
 
     public Player getPlayer() {
