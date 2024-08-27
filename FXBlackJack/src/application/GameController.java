@@ -41,35 +41,29 @@ public class GameController implements Initializable{
     
     @FXML
     private HBox rootHBox;
-    
+   
     @FXML
     private VBox middleVBox;
-    
     //three main container for middle VBox
     @FXML
     private VBox dealerVBox;
     
     @FXML
     private HBox dealerCardBox;
-    
     @FXML
     private Label dealerHandTotal;
-    
+ 
     @FXML
     private Label middleLabel;
     
     @FXML
     private HBox playerHBox;
-    
     @FXML
     private VBox playerVBox1;
-    
     @FXML
     private HBox playerCardBox1;
-    
     @FXML
     private Label playerTotal1;
-    
     @FXML
     private Label playerBetAmount1;
     
@@ -81,7 +75,6 @@ public class GameController implements Initializable{
     
     @FXML
     private VBox buttonVBox;
-    
     @FXML
     private Button splitButton;
     @FXML
@@ -145,7 +138,12 @@ public class GameController implements Initializable{
                 }
                 break;
             case "P": 
-                flashButton(splitButton);
+                if (game.getPlayer().getHands().size() == 2) {
+                    flashButton(hitButton);
+                }
+                else {
+                    flashButton(splitButton);
+                }
                 break;
             default: 
                 System.out.println("What happened");

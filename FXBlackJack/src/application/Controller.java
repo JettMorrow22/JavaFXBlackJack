@@ -34,6 +34,8 @@ public class Controller implements Initializable{
     
     @FXML
     private Button welcomeButton;
+    @FXML
+    private Button simButton;
     
     @FXML
     private Label welcomeLabel;
@@ -70,6 +72,36 @@ public class Controller implements Initializable{
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void playSim(ActionEvent e) throws IOException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SimData.fxml"));
+            SimDataController controller = new SimDataController(game);
+
+            loader.setController( controller);
+            root = loader.load();
+            stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+            
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            double x = stage.getX();
+            double y = stage.getY();
+            
+            scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            stage.setScene(scene);
+            
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setX(x);
+            stage.setY(y);
+            
+            stage.show(); 
+        }
+        catch (IOException event) {
+            event.printStackTrace();
         }
     }
 
