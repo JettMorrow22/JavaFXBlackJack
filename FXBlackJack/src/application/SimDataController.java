@@ -26,7 +26,7 @@ public class SimDataController implements Initializable {
     private StackPane stackPane;
     @FXML
     private ImageView imageView;
-    
+
     @FXML
     private VBox vBox;
     @FXML
@@ -63,19 +63,20 @@ public class SimDataController implements Initializable {
     private TextField profitText;
     @FXML
     private Label profitError;
-    
+
     @FXML
     private Button runButton;
-    
+
     private Game game;
     private Stage stage;
     private Scene scene;
     private Parent root;
-    
+
     public SimDataController(Game g) {
         game = g;
     }
-    
+
+
     public boolean validateField(String s, Label error) {
         try {
             int num = Integer.parseInt(s);
@@ -84,59 +85,64 @@ public class SimDataController implements Initializable {
                 return true;
             }
             else {
-                error.setText("Enter a positive value that is less than " + Integer.MAX_VALUE);
+                error.setText("Enter a positive value that is less than "
+                    + Integer.MAX_VALUE);
                 error.setVisible(true);
                 return false;
             }
         }
         catch (NumberFormatException e) {
-            //show that there is an error
+            // show that there is an error
             error.setText("Enter a valid numeric value");
             error.setVisible(true);
             return false;
         }
     }
-    
+
+
     public boolean validateInput() {
-        return (validateField(gamesText.getText(),gamesError)
-                && validateField(balanceText.getText(), balanceError)
-                && validateField(betText.getText(), betError)
-                && validateField(profitText.getText(), profitError));
+        return (validateField(gamesText.getText(), gamesError) && validateField(
+            balanceText.getText(), balanceError) && validateField(betText
+                .getText(), betError) && validateField(profitText.getText(),
+                    profitError));
     }
-    
-    
+
+
     public void runSim(ActionEvent e) throws IOException {
-        //must check that all the inputs are valid and positive ints not too big
+        // must check that all the inputs are valid and positive ints not too
+        // big
         if (validateInput()) {
-            Simulations sim = new Simulations(Integer.parseInt(gamesText.getText()),
-                Integer.parseInt(balanceText.getText()),
-                Integer.parseInt(betText.getText()),
-                Integer.parseInt(profitText.getText()),
-                game);
-            
-            //change to other window and start the simulation
+            Simulations sim = new Simulations(Integer.parseInt(gamesText
+                .getText()), Integer.parseInt(balanceText.getText()), Integer
+                    .parseInt(betText.getText()), Integer.parseInt(profitText
+                        .getText()), game);
+
+            // change to other window and start the simulation
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("SimScreen.fxml"));
-                SimScreenController simController = new SimScreenController(sim, game);
-                loader.setController( simController);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "SimScreen.fxml"));
+                SimScreenController simController = new SimScreenController(sim,
+                    game);
+                loader.setController(simController);
                 root = loader.load();
                 stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-                
+
                 double width = stage.getWidth();
                 double height = stage.getHeight();
                 double x = stage.getX();
                 double y = stage.getY();
-                
+
                 scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource(
+                    "application.css").toExternalForm());
                 stage.setScene(scene);
-                
+
                 stage.setWidth(width);
                 stage.setHeight(height);
                 stage.setX(x);
                 stage.setY(y);
-                
-                stage.show(); 
+
+                stage.show();
             }
             catch (IOException event) {
                 event.printStackTrace();
@@ -144,19 +150,20 @@ public class SimDataController implements Initializable {
         }
     }
 
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        //this makes the imageView the size of the anchorPane
+        // this makes the imageView the size of the anchorPane
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
         imageView.fitHeightProperty().bind(stackPane.heightProperty());
-        imageView.setImage(new Image(getClass().getResource("/images/blackjack_Background_Image.jpg").toString()));
-        
-        
-        //parent vBox
+        imageView.setImage(new Image(getClass().getResource(
+            "/images/blackjack_Background_Image.jpg").toString()));
+
+        // parent vBox
         vBox.prefHeightProperty().bind(stackPane.heightProperty());
         vBox.prefWidthProperty().bind(stackPane.widthProperty());
-        
-        //Bind all the Hbox, label and text fields
+
+        // Bind all the Hbox, label and text fields
         infoLabel.setWrapText(true);
         infoLabel.prefHeightProperty().bind(vBox.heightProperty().divide(6));
         infoLabel.prefWidthProperty().bind(vBox.widthProperty().multiply(.66));
@@ -171,6 +178,5 @@ public class SimDataController implements Initializable {
         runButton.prefHeightProperty().bind(vBox.heightProperty().divide(6));
         runButton.prefWidthProperty().bind(vBox.widthProperty().divide(4));
     }
-    
-    
+
 }
